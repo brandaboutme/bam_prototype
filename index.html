@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrandAboutMe — Onboarding v6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============ design tokens ============ */
+  :root{
+    --dark:#111315; --light:#f7f5fb; --purple:#8c74c8; --purple-deep:#6f57ab; --purple-soft:#e9e3f6;
+    --green:#c9f59b; --green-deep:#3f6b1c; --card:#ffffff; --line:#e7e4f0; --line-strong:#d8d4e6;
+    --mut:#5b5766; --faint:#8b8797; --linkedin:#0A66C2; --danger:#b4443c; --danger-soft:#f8ebe9;
+    --r-lg:16px; --r-md:12px; --r-sm:9px;
+    --sh-card:0 1px 2px rgba(17,19,21,.05);
+    --sh-pop:0 16px 40px rgba(17,19,21,.16);
+    --fs-h1:1.55rem; --fs-h2:1.15rem; --fs-h3:.98rem; --fs-body:.9rem; --fs-sm:.82rem; --fs-xs:.74rem;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:'Public Sans',system-ui,sans-serif;background:var(--light);color:var(--dark);-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4,.serif{font-family:'Fraunces',serif;font-weight:600}
+  button{font:inherit;cursor:pointer}
+  button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+
+  .kicker{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+
+  /* buttons — one consistent system */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:var(--r-md);padding:12px 22px;font-weight:600;font-size:var(--fs-body);line-height:1;transition:background .15s,box-shadow .15s,transform .1s}
+  .btn:active{transform:scale(.985)}
+  .btn-primary{background:var(--purple);color:#fff}
+  .btn-primary:hover{background:var(--purple-deep)}
+  .btn-ghost{background:var(--card);border:1.5px solid var(--line-strong);color:var(--dark)}
+  .btn-ghost:hover{border-color:var(--purple);color:var(--purple-deep)}
+  .btn-li{background:var(--linkedin);color:#fff}
+  .btn-li:hover{filter:brightness(1.06)}
+  .btn-quiet-danger{background:transparent;border:1.5px solid var(--line-strong);color:var(--danger)}
+  .btn-quiet-danger:hover{border-color:var(--danger);background:var(--danger-soft)}
+  .btn-sm{padding:9px 14px;font-size:var(--fs-sm);border-radius:var(--r-sm)}
+  .link{background:none;border:0;color:var(--purple-deep);font-weight:600;font-size:var(--fs-sm);text-decoration:none}
+  .link:hover{text-decoration:underline;text-underline-offset:3px}
+  .link-mut{color:var(--mut);font-weight:500;text-decoration:underline;text-underline-offset:3px}
+
+  .badge{font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:6px}
+  .badge-ex{background:var(--purple-soft);color:var(--purple-deep)}
+  .badge-green{background:var(--green);color:var(--green-deep)}
+  .badge-red{background:var(--danger-soft);color:var(--danger)}
+  .badge-yours{background:var(--dark);color:var(--green)}
+
+  .toast{display:none;margin-top:12px;background:#f2fadf;border:1px solid #d9edb4;color:var(--green-deep);border-radius:var(--r-sm);padding:10px 14px;font-weight:600;font-size:var(--fs-sm);line-height:1.5}
+  .toast.show{display:block;animation:fade .25s ease}
+  .toast.purple{background:var(--purple-soft);border-color:#d8cfef;color:var(--purple-deep)}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @keyframes popout{to{opacity:0;transform:scale(.96);max-height:0;margin:0;padding:0;border-width:0}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ============ gates ============ */
+  .gate{position:fixed;inset:0;background:var(--light);z-index:200;display:none;align-items:center;justify-content:center;padding:24px;overflow-y:auto}
+  .gate.on{display:flex}
+  .gate-inner{max-width:520px;width:100%;text-align:center;padding:30px 0}
+  .logo{font-family:'Fraunces',serif;font-weight:700;font-size:1.3rem;letter-spacing:-.01em}
+  .logo .dot{color:var(--purple)}
+  .gate h1{font-size:clamp(1.8rem,4.2vw,2.5rem);line-height:1.15;margin:26px 0 12px;letter-spacing:-.01em}
+  .gate h1 em{font-style:normal;background:linear-gradient(transparent 60%,var(--green) 60%)}
+  .gate .sub{color:var(--mut);line-height:1.65;font-size:.98rem;margin-bottom:28px}
+  .gate .fine{font-size:var(--fs-sm);color:var(--faint);margin-top:16px;line-height:1.5}
+  .divider{display:flex;align-items:center;gap:14px;color:var(--faint);font-size:var(--fs-sm);margin:18px auto;max-width:360px}
+  .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+  .gform{max-width:400px;margin:0 auto;text-align:left}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:var(--fs-sm);font-weight:600;margin-bottom:6px}
+  .field input,.field textarea{width:100%;padding:12px 14px;border:1.5px solid var(--line-strong);border-radius:var(--r-sm);font:400 var(--fs-body) 'Public Sans';background:var(--card);color:var(--dark);transition:border-color .15s}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px var(--purple-soft)}
+  .dd{position:relative}
+  .dd-panel{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--card);border:1px solid var(--line-strong);border-radius:var(--r-sm);box-shadow:var(--sh-pop);max-height:180px;overflow-y:auto;z-index:60;display:none}
+  .dd-panel.open{display:block}
+  .dd-panel button{display:block;width:100%;text-align:left;padding:10px 14px;border:0;background:none;font:400 var(--fs-body) 'Public Sans';color:var(--dark)}
+  .dd-panel button:hover{background:var(--purple-soft)}
+  .modal-bg{position:fixed;inset:0;background:rgba(17,19,21,.5);z-index:210;display:none;align-items:center;justify-content:center;padding:20px}
+  .modal-bg.open{display:flex}
+  .modal{background:var(--card);border-radius:var(--r-lg);max-width:410px;width:100%;padding:28px;box-shadow:var(--sh-pop)}
+  .modal .li-mark{width:46px;height:46px;border-radius:11px;background:var(--linkedin);color:#fff;display:flex;align-items:center;justify-content:center;font:700 1.3rem 'Fraunces';margin-bottom:16px}
+  .modal h3{font-size:1.15rem;margin-bottom:6px}
+  .modal p{color:var(--mut);font-size:var(--fs-body);line-height:1.55;margin-bottom:14px}
+  .modal ul{list-style:none;margin-bottom:20px}
+  .modal li{display:flex;gap:10px;padding:9px 0;font-size:var(--fs-sm);border-bottom:1px solid var(--line)}
+  .modal li:last-child{border:0}
+  .modal li b{color:var(--green-deep)}
+  .modal .row{display:flex;gap:10px}
+  .modal .row .btn{flex:1}
+
+  /* ============ app shell ============ */
+  .app{display:none;min-height:100vh}
+  .app.on{display:grid;grid-template-columns:236px 1fr;grid-template-rows:60px 1fr;grid-template-areas:"side top" "side main"}
+  .side{grid-area:side;background:var(--dark);color:#fff;padding:20px 12px 16px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .side .logo{color:#fff;padding:2px 12px 22px;font-size:1.1rem}
+  .side .sect{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#6f6b7c;padding:0 12px 8px}
+  .nav{list-style:none;display:flex;flex-direction:column;gap:2px}
+  .nav button{position:relative;display:flex;align-items:center;gap:11px;width:100%;background:none;border:0;color:#a7a3b4;padding:10px 12px;border-radius:var(--r-sm);font-size:.88rem;font-weight:500;text-align:left;transition:background .15s,color .15s}
+  .nav button:hover{background:rgba(255,255,255,.07);color:#fff}
+  .nav button.active{background:rgba(140,116,200,.28);color:#fff;font-weight:600}
+  .nav button.active::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:3px;border-radius:2px;background:var(--green)}
+  .nav .ic{width:20px;text-align:center;flex-shrink:0;opacity:.8;font-size:.85rem}
+  .side-progress{margin-top:auto;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:var(--r-md);padding:13px}
+  .side-progress .lbl{font-size:.72rem;color:#a7a3b4;margin-bottom:8px;display:flex;justify-content:space-between}
+  .side-progress .lbl b{color:var(--green)}
+  .bar{height:6px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}
+  .bar i{display:block;height:100%;width:17%;background:var(--green);border-radius:3px;transition:width .4s ease}
+  .side-foot{margin-top:8px}
+  .logout-link{background:none;border:0;color:#a7a3b4;font-size:var(--fs-sm);font-weight:500;padding:9px 12px;text-align:left;width:100%;border-radius:var(--r-sm);display:flex;align-items:center;gap:10px}
+  .logout-link:hover{background:rgba(255,255,255,.07);color:#fff}
+
+  .top{grid-area:top;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:0 24px}
+  .top .ptitle{font:600 1rem 'Fraunces';letter-spacing:-.01em}
+  .top .spacer{flex:1}
+  .top .search{width:280px;background:var(--light);border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 13px;color:var(--faint);font-size:var(--fs-sm)}
+  .tour-restart{background:none;border:1.5px solid var(--line-strong);color:var(--mut);border-radius:var(--r-sm);padding:8px 13px;font-weight:600;font-size:var(--fs-sm)}
+  .tour-restart:hover{border-color:var(--purple);color:var(--purple-deep)}
+  .avatar{width:34px;height:34px;border-radius:50%;background:var(--purple);color:#fff;display:flex;align-items:center;justify-content:center;font:600 .78rem 'Fraunces';flex-shrink:0}
+
+  .main{grid-area:main;padding:28px clamp(20px,3.5vw,44px) 48px;overflow-x:hidden}
+  .page{display:none;animation:fade .25s ease}
+  .page.on{display:block}
+  .page-head{margin-bottom:22px;max-width:76ch}
+  .page-head h2{font-size:var(--fs-h1);letter-spacing:-.01em;margin-bottom:6px}
+  .page-head p{color:var(--mut);font-size:var(--fs-body);line-height:1.65}
+  .grid2{display:grid;grid-template-columns:1fr 340px;gap:22px;align-items:start}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:22px;box-shadow:var(--sh-card)}
+  .example-note{display:flex;gap:10px;align-items:center;background:var(--purple-soft);color:var(--purple-deep);border-radius:var(--r-sm);padding:10px 14px;font-size:var(--fs-sm);font-weight:500;margin-bottom:18px}
+
+  /* ============ dashboard ============ */
+  .hello{font-size:1.5rem;letter-spacing:-.01em;margin-bottom:3px}
+  .hello-sub{color:var(--mut);font-size:var(--fs-body);margin-bottom:24px}
+
+  .quick-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px;margin-bottom:22px}
+  .quick{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;box-shadow:var(--sh-card);transition:border-color .15s;overflow:hidden;display:flex;flex-direction:column}
+  .quick.gone{animation:popout .35s ease forwards}
+  .quick .qic{width:30px;height:30px;border-radius:8px;background:var(--purple-soft);color:var(--purple-deep);display:flex;align-items:center;justify-content:center;font:700 .8rem 'Fraunces';margin-bottom:11px}
+  .quick h4{font-size:var(--fs-h3);margin-bottom:4px}
+  .quick .cap{font-size:var(--fs-sm);color:var(--mut);line-height:1.55;margin-bottom:13px;flex:1}
+  .quick .open-btn{align-self:flex-start}
+  .quick .inner{display:none;margin-top:4px}
+  .quick.open{border-color:var(--purple)}
+  .quick.open .inner{display:block}
+  .quick.open .open-btn{display:none}
+  .quick textarea{width:100%;min-height:100px;border:1.5px solid var(--line-strong);border-radius:var(--r-sm);padding:11px;font:400 var(--fs-sm)/1.6 'Public Sans';resize:vertical}
+  .quick textarea:focus{outline:none;border-color:var(--purple)}
+  .quick .booked-line{display:none;font-size:var(--fs-sm);font-weight:600;color:var(--green-deep);background:#f2fadf;border:1px solid #d9edb4;border-radius:var(--r-sm);padding:9px 12px;margin-top:10px;line-height:1.5}
+  .quick.booked .booked-line{display:block}
+
+  .sect-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .sect-head h3{font-size:var(--fs-h2)}
+  .sect-head .link{font-size:var(--fs-sm)}
+
+  .checklist .ring-row{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+  .ring{width:64px;height:64px;border-radius:50%;background:conic-gradient(var(--green) var(--deg,60deg), var(--purple-soft) 0);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .ring i{width:49px;height:49px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font:600 .82rem 'Fraunces';font-style:normal}
+  .tasks{list-style:none}
+  .tasks li{display:flex;gap:10px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line);font-size:var(--fs-sm)}
+  .tasks li:last-child{border:0}
+  .tasks .box{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line-strong);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.68rem;color:transparent;transition:all .2s}
+  .tasks li.done .box{background:var(--green);border-color:var(--green);color:var(--green-deep);font-weight:700}
+  .tasks li.done{color:var(--faint);text-decoration:line-through;text-decoration-color:rgba(91,87,102,.35)}
+  .tasks li button{margin-left:auto;background:none;border:0;color:var(--purple-deep);font-weight:600;font-size:var(--fs-xs);flex-shrink:0}
+  .tasks li.done button{display:none}
+
+  .congrats{display:none;margin-bottom:22px}
+  .congrats.show{display:block;animation:fade .3s ease}
+  .congrats .card-head{font-size:var(--fs-h2);margin-bottom:4px}
+  .congrats .card-sub{font-size:var(--fs-sm);color:var(--mut);margin-bottom:16px}
+  .qgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:13px}
+  .qbox{border:1px solid var(--line);border-radius:var(--r-md);padding:15px}
+  .qbox.answered{border-color:#d9edb4;background:#fbfef4}
+  .qbox b{display:block;font-size:var(--fs-sm);margin-bottom:10px}
+  .qbox .opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line-strong);background:var(--card);border-radius:var(--r-sm);padding:10px 12px;font-size:var(--fs-sm);margin-bottom:8px;transition:all .15s}
+  .qbox .opt:hover{border-color:var(--purple)}
+  .qbox .opt.sel{background:var(--green);border-color:var(--green);color:var(--green-deep);font-weight:600}
+  .qbox .done-line{display:none;font-size:var(--fs-xs);color:var(--green-deep);font-weight:600}
+  .qbox.answered .done-line{display:block}
+
+  /* ============ profile ============ */
+  .prof-head{display:flex;gap:16px;align-items:center;margin-bottom:22px;flex-wrap:wrap}
+  .prof-head .avatar{width:60px;height:60px;font-size:1.15rem}
+  .prof-head h2{font-size:1.35rem}
+  .prof-head .sub{color:var(--mut);font-size:var(--fs-sm)}
+  .prof-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(295px,1fr));gap:16px}
+  .prof-card h3{font-size:var(--fs-h3);margin-bottom:4px}
+  .prof-card .cap{font-size:var(--fs-sm);color:var(--mut);margin-bottom:13px;line-height:1.55}
+  .pillars{display:flex;flex-wrap:wrap;gap:7px}
+  .pillars span{background:var(--purple-soft);color:var(--purple-deep);border-radius:999px;padding:6px 12px;font-size:var(--fs-xs);font-weight:600}
+  .learned{list-style:none}
+  .learned li{display:flex;gap:10px;padding:9px 0;font-size:var(--fs-sm);line-height:1.5;border-bottom:1px solid var(--line);align-items:flex-start}
+  .learned li:last-child{border:0}
+  .learned .src{margin-left:auto;flex-shrink:0}
+  .vsample{background:var(--light);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px;font-size:var(--fs-sm);color:var(--mut);display:flex;gap:10px;align-items:center;margin-bottom:9px}
+  .vsample b{color:var(--dark)}
+  .vsample .badge{margin-left:auto}
+
+  /* ============ drafts ============ */
+  .draft-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(295px,1fr));gap:15px;align-items:start}
+  .draft{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;position:relative;transition:border-color .25s;box-shadow:var(--sh-card)}
+  .draft.approved{border-color:#a9cf7a}
+  .draft .row{display:flex;gap:10px;align-items:center;margin-bottom:11px}
+  .draft .who{font-size:var(--fs-sm);font-weight:600}
+  .draft .sub{font-size:var(--fs-xs);color:var(--faint)}
+  .draft .body{font-size:var(--fs-body);line-height:1.6}
+  .draft .body strong{background:linear-gradient(transparent 60%,var(--green) 60%)}
+  .draft .foot{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .draft textarea{width:100%;min-height:100px;border:1.5px solid var(--purple);border-radius:var(--r-sm);padding:11px;font:400 var(--fs-sm)/1.6 'Public Sans';margin-top:12px;display:none;resize:vertical}
+  .draft.editing textarea{display:block}
+  .idea{border-left:3px solid var(--purple);border-radius:0 var(--r-lg) var(--r-lg) 0}
+  .idea h4{font-size:var(--fs-h3);margin-bottom:4px}
+  .idea p{font-size:var(--fs-sm);color:var(--mut);line-height:1.55}
+  .idea .badge{margin-top:9px;display:inline-block}
+
+  .ctabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:20px;overflow-x:auto}
+  .ctab{background:none;border:0;padding:10px 14px;font-size:var(--fs-sm);font-weight:600;color:var(--mut);border-bottom:2px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:7px}
+  .ctab:hover{color:var(--dark)}
+  .ctab.active{color:var(--purple-deep);border-bottom-color:var(--purple)}
+  .ctab .cnt{font-size:.66rem;font-weight:700;background:var(--light);border:1px solid var(--line);color:var(--mut);border-radius:999px;padding:2px 7px;min-width:22px;text-align:center}
+  .ctab.active .cnt{background:var(--purple-soft);border-color:var(--purple-soft);color:var(--purple-deep)}
+  .empty-state{text-align:center;padding:56px 20px;color:var(--mut);grid-column:1/-1}
+  .empty-state .glyph{width:52px;height:52px;border-radius:50%;border:2px solid var(--line-strong);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.2rem;color:var(--purple-deep)}
+  .empty-state h4{font-size:var(--fs-h3);color:var(--dark);margin-bottom:5px}
+  .empty-state p{font-size:var(--fs-sm);max-width:40ch;margin:0 auto;line-height:1.55}
+
+  /* ============ ideas ============ */
+  .nc-head{display:flex;align-items:flex-start;gap:8px;justify-content:space-between}
+  .nc-head label{font-size:var(--fs-sm);font-weight:600}
+  .nc-head label i{color:var(--danger);font-style:normal}
+  .idea-form textarea{width:100%;min-height:104px;border:1.5px solid var(--line-strong);border-radius:var(--r-sm);padding:13px;font:400 var(--fs-body)/1.6 'Public Sans';margin:11px 0 13px;resize:vertical}
+  .idea-form textarea:focus{outline:none;border-color:var(--purple)}
+  .idea-form .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+  .idea-form .row .push{margin-left:auto}
+
+  /* ============ calendar ============ */
+  .cal-hint{display:flex;gap:10px;align-items:center;background:#f2fadf;border:1px solid #d9edb4;color:var(--green-deep);border-radius:var(--r-sm);padding:10px 14px;font-size:var(--fs-sm);font-weight:600;margin-bottom:16px}
+  .cal{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-card)}
+  .cal-top{display:flex;align-items:center;gap:12px;padding:15px 18px 9px}
+  .cal-top h3{font-size:var(--fs-h2)}
+  .cal-dow,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+  .cal-dow div{padding:10px 8px;font-size:.66rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);text-align:center;border-bottom:1px solid var(--line)}
+  .day{min-height:86px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px;font-size:var(--fs-xs);color:var(--mut);position:relative;transition:background .15s}
+  .day:nth-child(7n){border-right:0}
+  .day.other{background:var(--light);color:#c0bccb}
+  .day.today .num{background:var(--dark);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center}
+  .day.dropok{background:var(--purple-soft);outline:2px dashed var(--purple);outline-offset:-4px}
+  .day.movetarget{cursor:pointer;background:#f3f0fa}
+  .pill{background:var(--purple);color:#fff;border-radius:7px;padding:6px 8px;font-size:.7rem;font-weight:600;line-height:1.35;margin-top:6px;cursor:grab;user-select:none;box-shadow:0 3px 8px rgba(140,116,200,.35)}
+  .pill:active{cursor:grabbing}
+  .pill.moving{outline:2px solid var(--green)}
+  .pill.auto-fade{opacity:0;transform:scale(.85);transition:opacity .3s,transform .3s}
+  .pill.auto-pop{animation:popin .35s ease}
+  @keyframes popin{from{opacity:0;transform:scale(.75)}to{opacity:1;transform:scale(1)}}
+
+  /* ============ personalize ============ */
+  .pick-group{margin-bottom:24px}
+  .pick-group h4{font-size:var(--fs-h3);margin-bottom:4px}
+  .pick-group p{font-size:var(--fs-sm);color:var(--mut);margin-bottom:13px}
+  .people{display:grid;grid-template-columns:repeat(auto-fill,minmax(114px,1fr));gap:11px}
+  .person{background:var(--card);border:1.5px solid var(--line-strong);border-radius:var(--r-md);padding:14px 8px;text-align:center;transition:all .15s;position:relative}
+  .person:hover{border-color:var(--purple)}
+  .person.sel{border-color:var(--purple);background:var(--purple-soft)}
+  .person.sel::after{content:"✓";position:absolute;top:7px;right:7px;width:18px;height:18px;border-radius:50%;background:var(--green);color:var(--green-deep);font-size:.66rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .pavatar{width:46px;height:46px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;color:#fff;font:600 .9rem 'Fraunces'}
+  .person b{display:block;font-size:var(--fs-xs);font-weight:600;margin-bottom:2px}
+  .person span{font-size:.66rem;color:var(--faint);line-height:1.35;display:block}
+  .cheer{display:none;align-items:center;gap:10px;background:var(--dark);color:var(--green);border-radius:var(--r-sm);padding:11px 14px;font-size:var(--fs-sm);font-weight:600;margin-bottom:16px}
+  .cheer.show{display:flex;animation:fade .25s ease}
+
+  .writer{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+  .writer .pavatar{width:42px;height:42px;background:var(--dark);color:var(--green);margin:0;font-size:.9rem}
+  .writer b{font-size:var(--fs-sm);display:block}
+  .writer span{font-size:var(--fs-xs);color:var(--faint)}
+  .slot-row{display:flex;gap:7px;flex-wrap:wrap}
+  .slot-row button{border:1.5px solid var(--line-strong);background:var(--card);border-radius:var(--r-sm);padding:8px 11px;font-size:var(--fs-xs);font-weight:600}
+  .slot-row button:hover{border-color:var(--purple)}
+  .slot-row button.sel{background:var(--purple);border-color:var(--purple);color:#fff}
+
+  /* ============ media ============ */
+  .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:13px}
+  .media-item{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--sh-card)}
+  .media-thumb{height:92px;display:flex;align-items:center;justify-content:center;font:700 .68rem 'Public Sans';color:var(--purple-deep);background:var(--purple-soft);letter-spacing:.08em}
+  .media-item .cap{padding:9px 11px;font-size:var(--fs-xs);color:var(--faint)}
+  .media-item .cap b{display:block;color:var(--dark);font-size:var(--fs-xs);font-weight:600;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* ============ tour ============ */
+  .tour-ring{position:absolute;border-radius:var(--r-lg);box-shadow:0 0 0 2px var(--purple),0 0 0 7px rgba(140,116,200,.18);pointer-events:none;z-index:120;transition:all .3s ease}
+  .bubble{position:fixed;right:22px;bottom:22px;z-index:130;width:272px;max-width:calc(100vw - 32px);background:var(--dark);color:#fff;border-radius:var(--r-md);padding:16px;box-shadow:var(--sh-pop);animation:fade .25s ease}
+  .bubble .stepno{font-size:.62rem;font-weight:700;letter-spacing:.1em;color:var(--green);text-transform:uppercase;margin-bottom:8px}
+  .bprogress{height:3px;border-radius:2px;background:rgba(255,255,255,.14);margin-bottom:11px;overflow:hidden}
+  .bprogress i{display:block;height:100%;width:0;background:var(--green);border-radius:2px;transition:width .3s ease}
+  .bubble h4{font-size:var(--fs-body);margin-bottom:5px;color:#fff}
+  .bubble p{font-size:var(--fs-xs);line-height:1.55;color:#bab6c6;margin-bottom:13px}
+  .bubble .bnav{display:flex;gap:6px;align-items:center}
+  .bubble .bnav .btn{padding:7px 12px;font-size:var(--fs-xs);border-radius:7px}
+  .bubble .bnav .btn-back{background:transparent;color:#bab6c6;border:1.5px solid #34373c}
+  .bubble .bnav .btn-next{background:var(--green);color:var(--dark)}
+  .bubble .skip{margin-left:auto;background:none;border:0;color:#7d7989;font-size:.7rem;text-decoration:underline}
+  @media (max-width:760px){ .bubble{left:16px;right:16px;bottom:16px;width:auto} }
+
+  @media (max-width:900px){
+    .app.on{grid-template-columns:1fr;grid-template-rows:auto 60px 1fr;grid-template-areas:"side" "top" "main"}
+    .side{height:auto;position:static;flex-direction:row;align-items:center;gap:6px;padding:10px 14px;overflow-x:auto}
+    .side .logo{padding:0 8px 0 0;font-size:.95rem;white-space:nowrap}
+    .side .sect{display:none}
+    .nav{flex-direction:row}
+    .nav button{white-space:nowrap;padding:8px 10px}
+    .nav button.active::before{display:none}
+    .nav .lbl{display:none}
+    .side-progress{margin:0 0 0 auto;padding:8px 11px;min-width:104px}
+    .side-foot{display:none}
+    .grid2{grid-template-columns:1fr}
+    .day{min-height:60px}
+    .top .search{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- GATE · Landing -->
+<div class="gate on" id="g-landing">
+  <div class="gate-inner">
+    <div class="logo">BrandAbout<span class="dot">Me</span></div>
+    <h1>Your experience,<br><em>posted consistently.</em></h1>
+    <p class="sub">BAM learns how you write, drafts LinkedIn posts in your voice, and publishes only what you approve.</p>
+    <button class="btn btn-li" id="openConsent" style="width:100%;max-width:360px">in&nbsp;&nbsp;Continue with LinkedIn</button>
+    <div class="divider">or</div>
+    <button class="btn btn-ghost" id="toEmail" style="width:100%;max-width:360px">Sign up with email</button>
+    <p class="fine">LinkedIn is fastest — we build your profile automatically.<br>Nothing ever posts without your approval.</p>
+  </div>
+</div>
+
+<!-- GATE · Email sign-up -->
+<div class="gate" id="g-email">
+  <div class="gate-inner">
+    <div class="logo">BrandAbout<span class="dot">Me</span></div>
+    <h1 style="font-size:1.7rem">Create your account</h1>
+    <p class="sub">A few details and you're in. Connect LinkedIn later to enable publishing.</p>
+    <div class="gform">
+      <div class="field"><label for="e-name">Full name</label><input id="e-name" placeholder="e.g. Adaeze Obi"></div>
+      <div class="field"><label for="e-mail">Email</label><input id="e-mail" type="email" placeholder="you@company.com"></div>
+      <div class="field"><label for="e-pass">Password (8+ characters)</label><input id="e-pass" type="password"></div>
+      <div class="field dd"><label for="e-ind">Industry</label>
+        <input id="e-ind" placeholder="Start typing to search…" autocomplete="off">
+        <div class="dd-panel" id="ddPanel"></div>
+      </div>
+      <button class="btn btn-primary" id="emailContinue" style="width:100%;margin-top:6px">Create account &amp; continue</button>
+      <div style="margin-top:18px;text-align:center"><button class="link-mut link" id="backToLanding">← Back — use LinkedIn instead</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- LinkedIn consent -->
+<div class="modal-bg" id="consent">
+  <div class="modal" role="dialog" aria-label="LinkedIn permissions">
+    <div class="li-mark serif">in</div>
+    <h3>BrandAboutMe wants to connect</h3>
+    <p>Signing in creates your account instantly. Exactly what BAM can do:</p>
+    <ul>
+      <li><b>✓</b> Read your name, headline &amp; profile photo</li>
+      <li><b>✓</b> Publish posts <strong>you approve</strong></li>
+      <li><b>✓</b> Read performance of published posts</li>
+      <li><span style="color:var(--danger);font-weight:700">✗</span> Post on its own, message contacts, or edit your profile</li>
+    </ul>
+    <div class="row">
+      <button class="btn btn-ghost" id="cancelConsent">Cancel</button>
+      <button class="btn btn-li" id="allowConsent">Allow &amp; continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+  <aside class="side">
+    <div class="logo">BrandAbout<span class="dot" style="color:var(--green)">Me</span></div>
+    <div class="sect">Workspace</div>
+    <ul class="nav" id="navList">
+      <li><button class="active" data-page="dashboard"><span class="ic">▦</span><span class="lbl">Dashboard</span></button></li>
+      <li><button data-page="drafts"><span class="ic">▤</span><span class="lbl">Content Management</span></button></li>
+      <li><button data-page="calendar"><span class="ic">▣</span><span class="lbl">Calendar</span></button></li>
+      <li><button data-page="ideas"><span class="ic">✦</span><span class="lbl">Content Ideas</span></button></li>
+      <li><button data-page="media"><span class="ic">▧</span><span class="lbl">Media Library</span></button></li>
+      <li><button data-page="profile"><span class="ic">◉</span><span class="lbl">My Profile</span></button></li>
+      <li><button data-page="settings"><span class="ic">⚙</span><span class="lbl">Account Settings</span></button></li>
+    </ul>
+    <div class="side-progress">
+      <div class="lbl"><span>Setup</span><b id="pctSide">17%</b></div>
+      <div class="bar"><i id="barSide"></i></div>
+    </div>
+    <div class="side-foot">
+      <button class="logout-link" id="logoutBtn"><span class="ic">⎋</span><span class="lbl">Log out</span></button>
+    </div>
+  </aside>
+
+  <header class="top">
+    <div class="ptitle" id="pageTitle">Dashboard</div>
+    <div class="spacer"></div>
+    <div class="search">Search drafts, ideas…</div>
+    <button class="tour-restart" id="restartTour">Restart tour</button>
+    <div class="avatar" title="Ada Obi">AO</div>
+  </header>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <section class="page on" id="p-dashboard">
+      <div class="hello serif">Welcome back, Ada</div>
+      <div class="hello-sub">Finance Consultant · <span id="connectVia">connected via LinkedIn</span></div>
+
+      <div class="grid2">
+        <div>
+          <!-- quick actions -->
+          <div class="quick-row" id="quickRow">
+            <div class="quick" id="qOnboard">
+              <div class="qic">1</div>
+              <h4>Book onboarding meeting</h4>
+              <p class="cap">15 minutes — we set up your profile together and answer anything.</p>
+              <button class="btn btn-ghost btn-sm open-btn" data-open="qOnboard">Choose a time</button>
+              <div class="inner">
+                <div class="slot-row" id="onboardSlots">
+                  <button>Thu 20 · 13:00</button><button>Fri 21 · 09:30</button><button>Mon 24 · 15:00</button>
+                </div>
+                <button class="btn btn-primary btn-sm" id="bookOnboard" style="margin-top:12px">Book</button>
+              </div>
+            </div>
+            <div class="quick" id="qText">
+              <div class="qic">2</div>
+              <h4>Submit written text</h4>
+              <p class="cap">Paste something you've written — a talk, an essay, a long message. It's how BAM learns your voice.</p>
+              <button class="btn btn-ghost btn-sm open-btn" data-open="qText">Add text</button>
+              <div class="inner">
+                <textarea id="writtenText" placeholder="Paste your text here — 300+ characters works best…"></textarea>
+                <button class="btn btn-primary btn-sm" id="saveWritten" style="margin-top:10px">Submit</button>
+              </div>
+            </div>
+            <div class="quick" id="qCall">
+              <div class="qic">3</div>
+              <h4>Book a content call</h4>
+              <p class="cap">20 minutes with Matvei, your writer, to plan your next posts.</p>
+              <button class="btn btn-ghost btn-sm open-btn" data-open="qCall">Choose a time</button>
+              <div class="inner">
+                <div class="writer">
+                  <span class="pavatar">M</span>
+                  <div><b>Matvei</b><span>Senior brand writer · your client manager</span></div>
+                </div>
+                <div class="slot-row" id="callSlots">
+                  <button>Fri 21 · 10:00</button><button>Fri 21 · 14:30</button><button>Mon 24 · 09:00</button><button>Tue 25 · 11:30</button>
+                </div>
+                <button class="btn btn-primary btn-sm" id="bookCall" style="margin-top:12px">Book</button>
+              </div>
+              <div class="booked-line" id="callBookedLine"></div>
+            </div>
+          </div>
+
+          <!-- pending drafts -->
+          <div class="card" id="pendingDraftsCard" style="margin-bottom:22px">
+            <div class="sect-head">
+              <h3 class="serif" id="pendingHeading">4 drafts waiting for your approval</h3>
+              <button class="link" data-page="drafts">View all →</button>
+            </div>
+            <div class="draft-list" id="pendingDraftsWidget"></div>
+          </div>
+
+          <!-- congrats + quick questions -->
+          <div class="card congrats" id="congratsCard">
+            <div class="card-head serif">No drafts waiting for your approval</div>
+            <div class="card-sub">Nicely done. While you're here — two quick ones to sharpen your next batch:</div>
+            <div class="qgrid">
+              <div class="qbox" id="q1">
+                <b>Which opening do you prefer?</b>
+                <button class="opt" data-q="q1" data-a="Never in my life…">A &nbsp;"Never in my life…"</button>
+                <button class="opt" data-q="q1" data-a="I would never…">B &nbsp;"I would never…"</button>
+                <span class="done-line">Noted — saved to your profile.</span>
+              </div>
+              <div class="qbox" id="q2">
+                <b>Which closing feels more you?</b>
+                <button class="opt" data-q="q2" data-a="What would you add?">A &nbsp;"What would you add?"</button>
+                <button class="opt" data-q="q2" data-a="Agree or disagree?">B &nbsp;"Agree or disagree?"</button>
+                <span class="done-line">Noted — saved to your profile.</span>
+              </div>
+            </div>
+            <div class="toast" id="nudgeToast"></div>
+          </div>
+
+          <div class="card">
+            <div class="sect-head"><h3 class="serif">Next scheduled post</h3><button class="link" data-page="calendar">Calendar →</button></div>
+            <div class="draft" style="border:0;padding:0;margin:0;box-shadow:none">
+              <div class="row"><div class="avatar">AO</div><div><div class="who">Ada O.</div><div class="sub">Scheduled · Thu 20 Aug, 9:00 AM</div></div><span class="badge badge-green" style="margin-left:auto">Queued</span></div>
+              <div class="body">Most career advice is written for 25-year-olds. <strong>Here's what actually matters at 45…</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card checklist" id="progressCard">
+          <div class="kicker" style="margin-bottom:6px">Getting set up</div>
+          <p style="font-size:var(--fs-sm);color:var(--mut);margin-bottom:14px">Six steps and BAM runs on autopilot.</p>
+          <div class="ring-row">
+            <div class="ring" id="ring"><i id="pctRing">1/6</i></div>
+            <div style="font-size:var(--fs-sm);color:var(--mut);line-height:1.5">You're <b id="doneCount" style="color:var(--dark)">1 of 6</b> steps in. Pick up where you left off anytime.</div>
+          </div>
+          <ul class="tasks" id="tasks">
+            <li class="done" data-task="account"><span class="box">✓</span>Create your account</li>
+            <li data-task="onboarding"><span class="box">✓</span>Book onboarding meeting<button data-page="dashboard">Do it →</button></li>
+            <li data-task="drafts"><span class="box">✓</span>Approve or decline a draft<button data-page="drafts">Do it →</button></li>
+            <li data-task="writtentext"><span class="box">✓</span>Upload written text<button data-page="dashboard">Do it →</button></li>
+            <li data-task="personalize"><span class="box">✓</span>Personalize your profile<button data-page="profile">Do it →</button></li>
+            <li data-task="call"><span class="box">✓</span>Book a call with your writer<button data-page="dashboard">Do it →</button></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- MY PROFILE -->
+    <section class="page" id="p-profile">
+      <div class="prof-head">
+        <div class="avatar">AO</div>
+        <div>
+          <h2 class="serif">Ada Obi</h2>
+          <div class="sub">Finance Consultant · Lagos · <span class="badge badge-green">LinkedIn connected</span></div>
+        </div>
+      </div>
+      <div class="prof-grid" id="profileCard">
+        <div class="card prof-card">
+          <h3 class="serif">Brand identity</h3>
+          <p class="cap">Built from your LinkedIn, written text and personalization picks. Evolves as we learn.</p>
+          <div class="pillars"><span>Career wisdom</span><span>Client stories</span><span>Industry analysis</span><span>Warm &amp; direct tone</span><span>Story-led posts</span></div>
+        </div>
+        <div class="card prof-card">
+          <h3 class="serif">What we've learned about you</h3>
+          <p class="cap">Every nudge you answer teaches us something. Proof we're listening:</p>
+          <ul class="learned" id="learnedList">
+            <li>You prefer stories over listicles<span class="src badge badge-ex">From nudges</span></li>
+            <li>Your best writing mentions client work<span class="src badge badge-ex">From written text</span></li>
+            <li>You write warmest in the morning<span class="src badge badge-ex">From activity</span></li>
+          </ul>
+        </div>
+        <div class="card prof-card">
+          <h3 class="serif">Written text samples</h3>
+          <p class="cap">The raw material behind your voice model. More samples, sharper drafts.</p>
+          <div id="sampleList">
+            <div class="vsample" id="noSample">No samples yet — add your first below. <span class="badge badge-ex">Empty</span></div>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="addSampleBtn">＋ Add written text</button>
+          <div class="field" id="sampleForm" style="display:none;margin-top:12px">
+            <textarea id="sampleText" placeholder="Paste a talk, essay, or long personal message (300+ characters)…" style="min-height:110px"></textarea>
+            <button class="btn btn-primary btn-sm" id="saveSample" style="margin-top:9px">Save</button>
+          </div>
+          <div class="toast" id="sampleToast">Saved. BAM is analyzing your tone and phrasing.</div>
+        </div>
+        <div class="card prof-card">
+          <h3 class="serif">Your content at a glance</h3>
+          <p class="cap">Everything you've made with BAM so far.</p>
+          <ul class="learned">
+            <li><span id="draftsWaitingProf">4</span>&nbsp;drafts waiting for review<span class="src"><button class="link" data-page="drafts">Open →</button></span></li>
+            <li><span id="schedProf">1</span>&nbsp;post scheduled<span class="src"><button class="link" data-page="calendar">Open →</button></span></li>
+            <li><span id="ideaCountProf">0</span>&nbsp;ideas submitted<span class="src"><button class="link" data-page="ideas">Open →</button></span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" id="personalizeArea" style="max-width:820px;margin-top:20px">
+        <h3 class="serif" style="margin-bottom:4px">Personalize your profile</h3>
+        <p style="font-size:var(--fs-sm);color:var(--mut);margin-bottom:18px">Tell BAM whose voice you admire — we'll get the rest on your content call with Matvei.</p>
+        <div class="cheer" id="cheer"></div>
+        <div class="pick-group" style="margin-bottom:10px">
+          <h4>Favourite voices on LinkedIn</h4>
+          <p>Whose posts do you actually stop and read?</p>
+          <div class="people" data-mount="people" id="peopleGrid"></div>
+        </div>
+        <div style="font-size:var(--fs-sm);color:var(--mut);margin-top:6px">Selected: <b data-mount="pickcount" style="color:var(--green-deep)">0</b> · pick at least <b>2</b> to finish this step</div>
+        <button class="btn btn-primary" id="savePicks" style="margin-top:16px">Save preferences</button>
+        <div class="toast" id="pickToast">Saved — check "What we've learned about you" above.</div>
+      </div>
+    </section>
+
+    <!-- CONTENT MANAGEMENT -->
+    <section class="page" id="p-drafts">
+      <div class="page-head">
+        <h2>Content Management</h2>
+        <p>Every post BAM writes lives here, organized by status. Approve, edit, or decline — approved drafts move to your Calendar automatically and drop off the pending list; edited ones stay until you approve them. Nothing goes to LinkedIn without you.</p>
+      </div>
+      <div class="example-note"><b>Safe demo</b>&nbsp;— these are examples. Press Approve or Decline to see exactly what happens. Nothing goes to LinkedIn.</div>
+      <div class="ctabs" id="ctabs">
+        <button class="ctab active" data-tab="pending">Pending <span class="cnt" id="cntPending">4</span></button>
+        <button class="ctab" data-tab="approved">Approved <span class="cnt" id="cntApproved">0</span></button>
+        <button class="ctab" data-tab="published">Published <span class="cnt" id="cntPublished">2</span></button>
+        <button class="ctab" data-tab="declined">Declined <span class="cnt" id="cntDeclined">0</span></button>
+        <button class="ctab" data-tab="comments">Comments <span class="cnt" id="cntComments">0</span></button>
+      </div>
+      <div class="draft-list" id="draftExamples"></div>
+    </section>
+
+    <!-- CALENDAR -->
+    <section class="page" id="p-calendar">
+      <div class="page-head"><h2>Calendar</h2><p>Everything scheduled, a month at a glance.</p></div>
+      <div class="cal-hint">Watch — we'll move a post automatically to show how rescheduling works. You can also drag any post yourself.</div>
+      <div class="cal" id="calWrap">
+        <div class="cal-top"><h3 class="serif">August 2026</h3><span class="badge badge-green" id="calCount">1 post scheduled</span></div>
+        <div class="cal-dow"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+      <div class="toast" id="calToast"></div>
+    </section>
+
+    <!-- CONTENT IDEAS -->
+    <section class="page" id="p-ideas">
+      <div class="page-head"><h2>Content Ideas</h2><p>Share your content ideas for LinkedIn posts — BAM turns them into drafts in your voice.</p></div>
+      <div class="card idea-form" id="ideaForm" style="margin-bottom:20px">
+        <h3 class="serif" style="margin-bottom:14px">New content idea</h3>
+        <div class="nc-head"><label for="ideaText">What's your content idea? <i>*</i></label></div>
+        <textarea id="ideaText" placeholder="Tell us about this idea… (e.g., 'Panel discussion on AI at TechCon – amazing insights on future of automation')"></textarea>
+        <div class="field" id="ideaTranscriptField" style="display:none">
+          <label for="ideaTranscriptText">Written text</label>
+          <textarea id="ideaTranscriptText" placeholder="Paste a talk, transcript, or long personal message…" style="min-height:104px"></textarea>
+        </div>
+        <div class="row">
+          <button class="btn btn-ghost btn-sm">Upload media</button>
+          <button class="btn btn-ghost btn-sm" id="toggleTranscriptBtn" type="button">Add written text</button>
+          <button class="btn btn-ghost btn-sm" data-page="media">From library</button>
+          <button class="btn btn-primary btn-sm push" id="submitIdea">Submit idea</button>
+        </div>
+        <div class="toast" id="ideaToast"></div>
+      </div>
+      <div class="sect-head"><h3 class="serif">Your ideas</h3></div>
+      <div class="draft-list" id="yourIdeas" style="margin-bottom:24px">
+        <div class="card" id="noIdeas" style="color:var(--mut);font-size:var(--fs-sm)">Nothing yet — submit your first idea above and it'll appear here.</div>
+      </div>
+      <div class="sect-head"><h3 class="serif">Need inspiration?</h3></div>
+      <div class="draft-list">
+        <div class="draft idea"><h4>"The advice I'd give my 30-year-old self"</h4><p>Reflective posts from senior professionals consistently outperform how-to content.</p><span class="badge badge-ex">Example</span></div>
+        <div class="draft idea"><h4>React to this week's rate decision</h4><p>Timely + your 20 years of context = a take only you can write.</p><span class="badge badge-ex">Example</span></div>
+      </div>
+    </section>
+
+    <!-- MEDIA LIBRARY -->
+    <section class="page" id="p-media">
+      <div class="page-head"><h2>Media Library</h2><p>Images and files you've uploaded, ready to drop into any draft or idea.</p></div>
+      <div class="card" style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:16px 22px">
+        <p style="font-size:var(--fs-sm);color:var(--mut)">6 files · 24 MB used</p>
+        <button class="btn btn-primary btn-sm" id="uploadMediaBtn">Upload media</button>
+      </div>
+      <div class="toast" id="mediaToast" style="margin:0 0 16px">Demo only — uploads aren't wired up in this prototype.</div>
+      <div class="media-grid" id="mediaGrid"></div>
+    </section>
+
+    <!-- ACCOUNT SETTINGS -->
+    <section class="page" id="p-settings">
+      <div class="page-head"><h2>Account Settings</h2><p>Your account details, connection and preferences.</p></div>
+      <div class="card" style="max-width:620px">
+        <h3 class="serif" style="margin-bottom:16px">Account</h3>
+        <div class="field"><label for="s-name">Full name</label><input id="s-name" value="Ada Obi"></div>
+        <div class="field"><label for="s-mail">Email</label><input id="s-mail" type="email" value="ada@example.com"></div>
+        <div class="field"><label for="s-ind">Industry</label><input id="s-ind" value="Finance Consulting"></div>
+        <div style="font-size:var(--fs-sm);color:var(--mut);margin:6px 0 16px">LinkedIn <span class="badge badge-green">Connected</span></div>
+        <button class="btn btn-primary btn-sm" id="saveSettingsBtn">Save changes</button>
+        <div class="toast" id="settingsToast">Saved.</div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- tour -->
+<div class="tour-ring" id="tourRing" style="display:none"></div>
+<div class="bubble" id="bubble" style="display:none" role="dialog" aria-live="polite">
+  <div class="stepno" id="bStep"></div>
+  <div class="bprogress"><i id="bProgressBar"></i></div>
+  <h4 id="bTitle"></h4>
+  <p id="bBody"></p>
+  <div class="bnav">
+    <button class="btn btn-back" id="bBack">Back</button>
+    <button class="btn btn-next" id="bNext">Next</button>
+    <button class="skip" id="bSkip">Skip tour</button>
+  </div>
+</div>
+
+<script>
+/* ===== gates → straight into app ===== */
+const gLanding=document.getElementById('g-landing'), gEmail=document.getElementById('g-email'),
+      consent=document.getElementById('consent'), app=document.getElementById('app');
+function showGate(g){ [gLanding,gEmail].forEach(x=>x.classList.toggle('on',x===g)); }
+document.getElementById('openConsent').onclick=()=>consent.classList.add('open');
+document.getElementById('cancelConsent').onclick=()=>consent.classList.remove('open');
+document.getElementById('toEmail').onclick=()=>showGate(gEmail);
+document.getElementById('backToLanding').onclick=()=>showGate(gLanding);
+function enterApp(){
+  consent.classList.remove('open');
+  [gLanding,gEmail].forEach(x=>x.classList.remove('on'));
+  app.classList.add('on');
+  setTimeout(startTour,400);
+}
+document.getElementById('allowConsent').onclick=enterApp;
+document.getElementById('emailContinue').onclick=()=>{
+  document.getElementById('connectVia').textContent='signed up with email · connect LinkedIn anytime';
+  enterApp();
+};
+
+/* ===== helpers ===== */
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function setText(id,v){ const el=document.getElementById(id); if(el)el.textContent=v; }
+
+/* ===== industry dropdown ===== */
+const industries=["Accounting","Advertising & Marketing","Agriculture","Architecture","Banking & Finance","Consulting","Design","Education","Energy & Utilities","Engineering","Government","Healthcare","Hospitality & Tourism","Human Resources","Insurance","Legal","Logistics & Supply Chain","Manufacturing","Non-profit","Oil & Gas","Real Estate","Retail & E-commerce","Software & Technology","Telecommunications"];
+const indInput=document.getElementById('e-ind'), ddPanel=document.getElementById('ddPanel');
+function renderDD(q){
+  const hits=industries.filter(i=>i.toLowerCase().includes(q.toLowerCase()));
+  ddPanel.innerHTML=hits.length?hits.map(i=>`<button type="button">${i}</button>`).join(''):`<div style="padding:11px 14px;font-size:.85rem;color:var(--mut)">No match — we'll add "${escapeHtml(q)}"</div>`;
+  ddPanel.querySelectorAll('button').forEach(b=>b.onclick=()=>{indInput.value=b.textContent;ddPanel.classList.remove('open');});
+}
+indInput.addEventListener('focus',()=>{renderDD(indInput.value);ddPanel.classList.add('open');});
+indInput.addEventListener('input',()=>{renderDD(indInput.value);ddPanel.classList.add('open');});
+document.addEventListener('click',e=>{ if(!e.target.closest('.dd')) ddPanel.classList.remove('open'); });
+
+/* ===== navigation + topbar title ===== */
+const pages=document.querySelectorAll('.page'), navBtns=document.querySelectorAll('.nav button');
+const pageTitles={dashboard:'Dashboard',drafts:'Content Management',calendar:'Calendar',ideas:'Content Ideas',media:'Media Library',profile:'My Profile',settings:'Account Settings'};
+function goPage(name){
+  pages.forEach(p=>p.classList.toggle('on',p.id==='p-'+name));
+  navBtns.forEach(b=>b.classList.toggle('active',b.dataset.page===name));
+  setText('pageTitle',pageTitles[name]||'');
+  window.scrollTo({top:0});
+  if(name==='calendar') maybeAutoPlayCalendar();
+}
+document.querySelectorAll('[data-page]').forEach(el=>el.addEventListener('click',()=>goPage(el.dataset.page)));
+
+/* ===== checklist ===== */
+const taskState={account:true,onboarding:false,drafts:false,writtentext:false,personalize:false,call:false};
+function completeTask(k){
+  if(taskState[k])return; taskState[k]=true;
+  const li=document.querySelector(`#tasks li[data-task="${k}"]`); if(li)li.classList.add('done');
+  const done=Object.values(taskState).filter(Boolean).length,total=6,pct=Math.round(done/total*100);
+  setText('pctRing',`${done}/${total}`);
+  document.getElementById('ring').style.setProperty('--deg',(pct*3.6)+'deg');
+  setText('doneCount',`${done} of ${total}`);
+  setText('pctSide',pct+'%');
+  document.getElementById('barSide').style.width=pct+'%';
+}
+
+/* ===== quick-action boxes ===== */
+document.querySelectorAll('.quick .open-btn').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.open).classList.add('open'));
+function pickSlot(rowId){
+  let chosen=null;
+  document.querySelectorAll('#'+rowId+' button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#'+rowId+' button').forEach(x=>x.classList.remove('sel'));
+    b.classList.add('sel'); chosen=b.textContent;
+  }));
+  return ()=>chosen;
+}
+const getOnboardSlot=pickSlot('onboardSlots'), getCallSlot=pickSlot('callSlots');
+document.getElementById('bookOnboard').onclick=function(){
+  const s=getOnboardSlot();
+  if(!s){ this.textContent='Pick a time first'; setTimeout(()=>this.textContent='Book',1400); return; }
+  const box=document.getElementById('qOnboard');
+  box.classList.add('gone'); setTimeout(()=>box.remove(),380);
+  completeTask('onboarding');
+};
+document.getElementById('saveWritten').onclick=function(){
+  const t=document.getElementById('writtenText');
+  if(t.value.length<300){ t.focus(); t.placeholder='A little more helps — aim for 300+ characters…'; return; }
+  addSampleToProfile('Written text (from dashboard)');
+  const box=document.getElementById('qText');
+  box.classList.add('gone'); setTimeout(()=>box.remove(),380);
+  completeTask('writtentext');
+};
+document.getElementById('bookCall').onclick=function(){
+  const s=getCallSlot();
+  if(!s){ this.textContent='Pick a time first'; setTimeout(()=>this.textContent='Book',1400); return; }
+  const box=document.getElementById('qCall');
+  box.classList.remove('open'); box.classList.add('booked');
+  setText('callBookedLine','Booked — '+s+' with Matvei. Invite on its way to your email. Book another anytime.');
+  completeTask('call');
+};
+
+/* ===== profile samples ===== */
+function addSampleToProfile(title){
+  const no=document.getElementById('noSample'); if(no)no.remove();
+  const d=document.createElement('div'); d.className='vsample';
+  d.innerHTML=`<b>${escapeHtml(title)}</b> · added today <span class="badge badge-green">Analyzed</span>`;
+  document.getElementById('sampleList').appendChild(d);
+}
+document.getElementById('addSampleBtn').onclick=()=>{ const f=document.getElementById('sampleForm'); f.style.display=f.style.display==='none'?'block':'none'; };
+document.getElementById('saveSample').onclick=()=>{
+  const t=document.getElementById('sampleText');
+  if(t.value.length<300){ t.focus(); t.placeholder='Aim for 300+ characters — a little more helps…'; return; }
+  addSampleToProfile('Pasted sample'); t.value='';
+  document.getElementById('sampleToast').classList.add('show');
+  completeTask('writtentext');
+};
+
+/* ===== drafts (shared data) ===== */
+let drafts=[
+  {id:1,sub:'Draft · in your voice',body:'Twenty years in finance taught me one uncomfortable truth: <strong>the spreadsheet is never the decision.</strong> The decision is always about people…',status:'pending',msg:'',msgClass:'',comment:''},
+  {id:2,sub:'Draft · from your written text',body:'A client asked me why I still take notes by hand. Short answer: <strong>slow thinking is a feature.</strong> Long answer below.',status:'pending',msg:'',msgClass:'',comment:''},
+  {id:3,sub:'Draft · from a content idea',body:'Most onboarding fails for one reason: <strong>nobody owns week two.</strong> Here is how we fixed that on my last team…',status:'pending',msg:'',msgClass:'',comment:''},
+  {id:4,sub:'Draft · in your voice',body:'I used to think busy meant important. <strong>Then a mentor asked me one question that changed that.</strong>',status:'pending',msg:'',msgClass:'',comment:''}
+];
+let decliningId=null;
+function draftCardHTML(d){
+  const approved=d.status==='approved', declined=d.status==='declined', isDeclining=decliningId===d.id;
+  return `<div class="draft ${approved?'approved':''} ${isDeclining?'editing':''}" data-id="${d.id}">
+    <span class="badge badge-ex" style="position:absolute;top:13px;right:13px">Example</span>
+    <div class="row"><div class="avatar">AO</div><div><div class="who">Ada O.</div><div class="sub">${approved?'Scheduled · Fri 21 Aug, 9:00 AM':d.sub}</div></div></div>
+    <div class="body">${d.body}</div>
+    <textarea placeholder="Tell Matvei what to change…">${escapeHtml(d.comment||'')}</textarea>
+    <div class="foot">
+      ${approved?'<span class="badge badge-green">Scheduled</span>'
+        :declined?'<span class="badge badge-red">Declined</span>'
+        :isDeclining?`
+      <button class="btn btn-quiet-danger btn-sm" data-act="senddecline">Send decline</button>
+      <button class="btn btn-ghost btn-sm" data-act="canceldecline">Cancel</button>`
+        :`
+      <button class="btn btn-primary btn-sm" data-act="approve">Approve</button>
+      <button class="btn btn-quiet-danger btn-sm" data-act="decline">Decline with a comment</button>`}
+    </div>
+    ${declined&&d.comment?`<div class="toast purple show">"${escapeHtml(d.comment)}"</div>`:''}
+    ${d.msg?`<div class="toast ${d.msgClass} show">${d.msg}</div>`:''}
+  </div>`;
+}
+function handleDraftAction(id,act){
+  const d=drafts.find(x=>x.id===id); if(!d)return;
+  if(act==='approve'){
+    d.status='approved';
+    d.msg='Approved — this becomes a scheduled post and moves to your Calendar automatically. You can still reschedule it before it goes live.'; d.msgClass='';
+    completeTask('drafts');
+  } else if(act==='decline'){
+    decliningId=id; d.msg=''; d.msgClass='';
+  } else if(act==='canceldecline'){
+    decliningId=null;
+  } else if(act==='senddecline'){
+    const ta=document.querySelector(`.draft[data-id="${id}"] textarea`);
+    const val=ta?ta.value.trim():'';
+    if(!val){ if(ta){ ta.focus(); ta.placeholder='Add a quick note so Matvei knows what to change…'; } return; }
+    d.comment=val; d.status='declined'; decliningId=null;
+    completeTask('drafts');
+  }
+  renderDrafts();
+}
+let contentTab='pending';
+const publishedDemo=[
+  {who:'Ada O.',sub:'Published · Mon 17 Aug, 9:00 AM',body:'Most career advice is written for 25-year-olds. <strong>Here is what actually matters at 45…</strong>'},
+  {who:'Ada O.',sub:'Published · Wed 12 Aug, 9:00 AM',body:'Nobody tells you this about your first leadership role: <strong>the hardest part is not the decisions.</strong>'}
+];
+function emptyStateHTML(icon,title,body){
+  return `<div class="empty-state"><div class="glyph">${icon}</div><h4>${title}</h4><p>${body}</p></div>`;
+}
+document.querySelectorAll('#ctabs .ctab').forEach(b=>{
+  b.onclick=()=>{
+    contentTab=b.dataset.tab;
+    document.querySelectorAll('#ctabs .ctab').forEach(x=>x.classList.toggle('active',x===b));
+    renderDrafts();
+  };
+});
+function renderDrafts(){
+  const pending=drafts.filter(d=>d.status==='pending');
+  const approved=drafts.filter(d=>d.status==='approved');
+  const declined=drafts.filter(d=>d.status==='declined');
+  const commented=drafts.filter(d=>d.comment);
+
+  const list=document.getElementById('draftExamples');
+  if(list){
+    if(contentTab==='pending'){
+      list.innerHTML=pending.length?pending.map(draftCardHTML).join(''):emptyStateHTML('✓','All caught up','No posts pending your approval at the moment.');
+    } else if(contentTab==='approved'){
+      list.innerHTML=approved.length?approved.map(draftCardHTML).join(''):emptyStateHTML('▣','Nothing approved yet','Approve a draft from Pending and it will show up here, scheduled on your Calendar.');
+    } else if(contentTab==='declined'){
+      list.innerHTML=declined.length?declined.map(draftCardHTML).join(''):emptyStateHTML('✕','No declined posts','Posts you decline stay here for reference.');
+    } else if(contentTab==='published'){
+      list.innerHTML=publishedDemo.map(p=>`<div class="draft"><span class="badge badge-ex" style="position:absolute;top:13px;right:13px">Example</span><div class="row"><div class="avatar">AO</div><div><div class="who">${p.who}</div><div class="sub">${p.sub}</div></div></div><div class="body">${p.body}</div></div>`).join('');
+    } else if(contentTab==='comments'){
+      list.innerHTML=commented.length?commented.map(d=>`<div class="draft"><div class="row"><div class="avatar">AO</div><div><div class="who">Ada O.</div><div class="sub">Comment on a declined draft</div></div></div><div class="body">${d.body}</div><div class="toast purple show">"${escapeHtml(d.comment)}"</div></div>`).join(''):emptyStateHTML('…','No comments yet','Decline a draft with a comment and Matvei will see it here.');
+    }
+  }
+
+  const widget=document.getElementById('pendingDraftsWidget');
+  if(widget) widget.innerHTML=pending.map(draftCardHTML).join('');
+  setText('pendingHeading',`${pending.length} draft${pending.length===1?'':'s'} waiting for your approval`);
+
+  document.querySelectorAll('#draftExamples [data-act],#pendingDraftsWidget [data-act]').forEach(btn=>{
+    btn.onclick=()=>handleDraftAction(+btn.closest('.draft').dataset.id,btn.dataset.act);
+  });
+
+  /* counts: tab badges + profile + calendar (no dashboard stat tiles) */
+  const sched=1+approved.length;
+  setText('cntPending',pending.length); setText('cntApproved',approved.length);
+  setText('cntDeclined',declined.length); setText('cntComments',commented.length);
+  setText('cntPublished',publishedDemo.length);
+  setText('draftsWaitingProf',pending.length); setText('schedProf',sched);
+  setText('calCount',`${sched} post${sched===1?'':'s'} scheduled`);
+
+  const pcard=document.getElementById('pendingDraftsCard'), congrats=document.getElementById('congratsCard');
+  if(pcard) pcard.style.display=pending.length?'':'none';
+  if(congrats) congrats.classList.toggle('show',pending.length===0);
+}
+renderDrafts();
+
+/* ===== congrats A/B nudges ===== */
+let nudgeAnswers=0;
+document.querySelectorAll('.qbox .opt').forEach(b=>b.addEventListener('click',()=>{
+  const box=document.getElementById(b.dataset.q);
+  if(box.classList.contains('answered'))return;
+  box.classList.add('answered'); b.classList.add('sel'); nudgeAnswers++;
+  const li=document.createElement('li');
+  li.innerHTML=`${b.dataset.q==='q1'?'Preferred opening':'Preferred closing'}: "${escapeHtml(b.dataset.a)}"<span class="src badge badge-ex">From nudges</span>`;
+  document.getElementById('learnedList').appendChild(li);
+  const t=document.getElementById('nudgeToast');
+  t.className='toast show';
+  t.textContent=nudgeAnswers===1?'Noted — one step closer to better personalization.':'Both answered — logged in My Profile under "what we\u2019ve learned".';
+  if(nudgeAnswers>=2)completeTask('personalize');
+}));
+
+/* ===== calendar ===== */
+const grid=document.getElementById('calGrid');
+const FIRST_DOW=6, DAYS=31, TODAY=19; let postDay=20, moveMode=false;
+function buildCal(){
+  grid.innerHTML='';
+  for(let i=0;i<FIRST_DOW;i++){const d=document.createElement('div');d.className='day other';d.innerHTML=`<span class="num">${26+i}</span>`;grid.appendChild(d);}
+  for(let n=1;n<=DAYS;n++){
+    const d=document.createElement('div'); d.className='day'+(n===TODAY?' today':''); d.dataset.day=n;
+    d.innerHTML=`<span class="num">${n}</span>`;
+    if(n===postDay){
+      const p=document.createElement('div'); p.className='pill'; p.draggable=true;
+      p.textContent='9:00 · Career advice post';
+      p.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain','pill'));
+      p.addEventListener('click',()=>{ moveMode=!moveMode; p.classList.toggle('moving',moveMode);
+        document.querySelectorAll('.day[data-day]').forEach(x=>x.classList.toggle('movetarget',moveMode&&+x.dataset.day!==postDay)); });
+      d.appendChild(p);
+    }
+    d.addEventListener('dragover',e=>{e.preventDefault();d.classList.add('dropok');});
+    d.addEventListener('dragleave',()=>d.classList.remove('dropok'));
+    d.addEventListener('drop',e=>{e.preventDefault();movePost(n);});
+    d.addEventListener('click',()=>{ if(moveMode&&n!==postDay){moveMode=false;movePost(n);} });
+    grid.appendChild(d);
+  }
+  const used=FIRST_DOW+DAYS,trail=(7-used%7)%7;
+  for(let i=1;i<=trail;i++){const d=document.createElement('div');d.className='day other';d.innerHTML=`<span class="num">${i}</span>`;grid.appendChild(d);}
+}
+function movePost(n){
+  if(n===postDay)return; postDay=n; buildCal();
+  const t=document.getElementById('calToast');
+  t.className='toast show';
+  t.textContent=`Rescheduled — your post now goes out on ${n} August at 9:00 AM.`;
+}
+buildCal();
+let calendarDemoPlayed=false;
+function maybeAutoPlayCalendar(){
+  if(calendarDemoPlayed)return; calendarDemoPlayed=true;
+  const pillEl=document.querySelector(`.day[data-day="${postDay}"] .pill`);
+  if(!pillEl)return;
+  setTimeout(()=>{
+    pillEl.classList.add('auto-fade');
+    setTimeout(()=>{
+      postDay=postDay>=27?postDay-5:postDay+3;
+      buildCal();
+      const newPill=document.querySelector(`.day[data-day="${postDay}"] .pill`);
+      if(newPill)newPill.classList.add('auto-pop');
+      const t=document.getElementById('calToast');
+      t.className='toast show';
+      t.textContent='That was BAM moving a post automatically — you can also drag any post yourself to pick a different day.';
+    },320);
+  },850);
+}
+
+/* ===== content ideas ===== */
+document.getElementById('toggleTranscriptBtn').onclick=()=>{
+  const f=document.getElementById('ideaTranscriptField');
+  f.style.display=f.style.display==='none'?'block':'none';
+};
+let ideas=0;
+document.getElementById('submitIdea').onclick=()=>{
+  const t=document.getElementById('ideaText'), tt=document.getElementById('ideaTranscriptText');
+  const hasIdea=t.value.trim().length>0, hasText=tt.value.trim().length>0;
+  if(!hasIdea&&!hasText){ t.focus(); t.placeholder='Tell us about the idea first — one sentence is enough…'; return; }
+  if(hasIdea){
+    const no=document.getElementById('noIdeas'); if(no)no.remove();
+    const d=document.createElement('div'); d.className='draft idea';
+    d.innerHTML=`<h4>${escapeHtml(t.value.slice(0,80))}</h4><p>Submitted just now · BAM is drafting it in your voice.</p><span class="badge badge-yours">Yours</span>`;
+    document.getElementById('yourIdeas').prepend(d);
+    ideas++; setText('ideaCountProf',ideas);
+  }
+  if(hasText){ addSampleToProfile('Written text (from idea submission)'); completeTask('writtentext'); }
+  const toast=document.getElementById('ideaToast');
+  toast.className='toast show';
+  toast.textContent=hasIdea?('Idea submitted — BAM will draft it in your voice.'+(hasText?' Written text added too.':'')):'Written text added — it strengthens your voice model.';
+  t.value=''; tt.value=''; document.getElementById('ideaTranscriptField').style.display='none';
+};
+
+/* ===== personalize ===== */
+const personalizeState={
+  people:[
+    {name:'Adam Grant',tag:'AG',bg:'#8c74c8',color:'#fff',desc:'Org psychology & work',sel:false},
+    {name:'Sahil Bloom',tag:'SB',bg:'#111315',color:'#c9f59b',desc:'Frameworks & growth',sel:false},
+    {name:'Ann Handley',tag:'AH',bg:'#6f57ab',color:'#fff',desc:'Writing & marketing',sel:false},
+    {name:'Justin Welsh',tag:'JW',bg:'#3f6b1c',color:'#fff',desc:'Solo business',sel:false},
+    {name:'Bernard Marr',tag:'BM',bg:'#8c74c8',color:'#fff',desc:'Tech & strategy',sel:false},
+    {name:'Add later',tag:'+',bg:'#e3dfee',color:'#5b5766',desc:'Add later',sel:false}
+  ]
+};
+const cheers={1:'Good job — one step closer to better personalization.',2:'Great taste. That\u2019s enough to sharpen your drafts — keep going if you like.',4:'Excellent — your voice model just got a serious upgrade.'};
+function pickCountTotal(){ return personalizeState.people.filter(p=>p.sel).length; }
+function refreshPersonalize(){
+  document.querySelectorAll('[data-mount="people"]').forEach(c=>{
+    c.innerHTML=personalizeState.people.map((p,i)=>`<button class="person ${p.sel?'sel':''}" data-i="${i}"><span class="pavatar" style="background:${p.bg};color:${p.color}">${p.tag}</span><b>${p.name}</b><span>${p.desc}</span></button>`).join('');
+    c.querySelectorAll('.person').forEach(b=>b.onclick=()=>{ personalizeState.people[+b.dataset.i].sel=!personalizeState.people[+b.dataset.i].sel; refreshPersonalize(); });
+  });
+  const picks=pickCountTotal();
+  document.querySelectorAll('[data-mount="pickcount"]').forEach(el=>el.textContent=picks);
+  if(cheers[picks]) document.querySelectorAll('.cheer').forEach(c=>{ c.textContent=cheers[picks]; c.classList.add('show'); });
+}
+document.getElementById('savePicks').onclick=()=>{
+  const picks=pickCountTotal();
+  if(picks<2){ document.querySelectorAll('.cheer').forEach(c=>{ c.textContent='Almost — pick at least 2 so we have enough signal.'; c.classList.add('show'); }); return; }
+  document.getElementById('pickToast').classList.add('show');
+  const favPerson=personalizeState.people.find(p=>p.sel&&p.name!=='Add later');
+  const li=document.createElement('li');
+  li.innerHTML=`You admire ${favPerson?escapeHtml(favPerson.name):'clear'}-style writing<span class="src badge badge-ex">From personalize</span>`;
+  document.getElementById('learnedList').appendChild(li);
+  completeTask('personalize');
+};
+refreshPersonalize();
+
+/* ===== media ===== */
+const mediaDemo=[
+  {kind:'IMG',name:'headshot-2026.jpg',size:'1.2 MB'},
+  {kind:'PNG',name:'q3-results-chart.png',size:'420 KB'},
+  {kind:'MP4',name:'conference-clip.mp4',size:'18 MB'},
+  {kind:'IMG',name:'team-offsite.jpg',size:'2.1 MB'},
+  {kind:'PDF',name:'client-case-study.pdf',size:'640 KB'},
+  {kind:'PNG',name:'linkedin-banner.png',size:'880 KB'}
+];
+document.getElementById('mediaGrid').innerHTML=mediaDemo.map(m=>`<div class="media-item"><div class="media-thumb">${m.kind}</div><div class="cap"><b>${m.name}</b>${m.size}</div></div>`).join('');
+document.getElementById('uploadMediaBtn').onclick=()=>{ document.getElementById('mediaToast').classList.add('show'); };
+
+/* ===== settings / logout ===== */
+document.getElementById('saveSettingsBtn').onclick=()=>{ document.getElementById('settingsToast').classList.add('show'); };
+document.getElementById('logoutBtn').onclick=()=>{ app.classList.remove('on'); endTour(); showGate(gLanding); };
+
+/* ===== tour ===== */
+const tourSteps=[
+ {page:'dashboard',sel:'#navList',title:'Everything lives here',body:'Content Management, Calendar, Content Ideas, Media Library, My Profile and Account Settings — all one click away.'},
+ {page:'dashboard',sel:'#quickRow',title:'Three quick wins',body:'Book your onboarding meeting, submit written text, and book a content call with Matvei. The first two disappear once done; the content call stays for whenever you need him.'},
+ {page:'dashboard',sel:'#pendingDraftsCard',title:'Drafts land right here',body:'Pending drafts surface on your Dashboard automatically. Approve one and it disappears and gets scheduled; decline with a comment and Matvei sees your note.'},
+ {page:'drafts',sel:'#draftExamples',title:'Organized by status',body:'Pending, Approved, Published, Declined and Comments — every post, one tab each, with live counts. Try Approve or Decline; it is a safe demo.'},
+ {page:'calendar',sel:'#calWrap',title:'Posts move on their own',body:'Watch — BAM just auto-moved the demo post to show how scheduling works. You can still drag any post yourself.'},
+ {page:'profile',sel:'#profileCard',title:'My Profile — your brand HQ',body:'Brand identity, what we have learned, written text samples and Personalize picks all live on this one page. That is the tour — Restart tour up top brings it back anytime.'}
+];
+let ts=-1;
+const ring2=document.getElementById('tourRing'), bubble=document.getElementById('bubble');
+function placeBubble(step){
+  const el=document.querySelector(step.sel); if(!el)return endTour();
+  const r=el.getBoundingClientRect(), sx=window.scrollX, sy=window.scrollY;
+  ring2.style.display='block';
+  Object.assign(ring2.style,{left:(r.left+sx-4)+'px',top:(r.top+sy-4)+'px',width:(r.width+8)+'px',height:(r.height+8)+'px'});
+  bubble.style.display='block';
+  el.scrollIntoView({block:'center',behavior:'smooth'});
+}
+function showStep(i){
+  ts=i; const s=tourSteps[i]; goPage(s.page);
+  setText('bStep',`Tour · ${i+1} of ${tourSteps.length}`);
+  document.getElementById('bProgressBar').style.width=((i+1)/tourSteps.length*100)+'%';
+  setText('bTitle',s.title); setText('bBody',s.body);
+  document.getElementById('bBack').style.visibility=i===0?'hidden':'visible';
+  document.getElementById('bNext').textContent=i===tourSteps.length-1?'Finish':'Next';
+  requestAnimationFrame(()=>setTimeout(()=>placeBubble(s),120));
+}
+function startTour(){showStep(0);}
+function endTour(){ts=-1;ring2.style.display='none';bubble.style.display='none';}
+document.getElementById('bNext').onclick=()=>ts<tourSteps.length-1?showStep(ts+1):endTour();
+document.getElementById('bBack').onclick=()=>ts>0&&showStep(ts-1);
+document.getElementById('bSkip').onclick=endTour;
+document.getElementById('restartTour').onclick=()=>showStep(0);
+window.addEventListener('resize',()=>{if(ts>-1)placeBubble(tourSteps[ts]);});
+</script>
+</body>
+</html>
