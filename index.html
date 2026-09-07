@@ -182,15 +182,16 @@
   .draft-empty-slot{border:1.5px dashed var(--line-strong);border-radius:var(--r-lg);padding:20px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;color:var(--mut);font-size:var(--fs-xs);min-height:170px;background:var(--light)}
   .draft-empty-slot .kicker{margin-bottom:8px}
 
-  .quick-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px;margin-bottom:22px}
-  .quick{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;box-shadow:var(--lift);transition:border-color .2s var(--ease),box-shadow .2s var(--ease),transform .2s var(--ease);overflow:hidden;display:flex;flex-direction:column}
+  .quick-row{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:28px}
+  @media (max-width:760px){.quick-row{grid-template-columns:1fr}}
+  .quick{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:24px;box-shadow:var(--lift);transition:border-color .2s var(--ease),box-shadow .2s var(--ease),transform .2s var(--ease);overflow:hidden;display:flex;flex-direction:column}
   .quick:hover{box-shadow:var(--lift-hover);transform:translateY(-2px)}
   .quick.gone{animation:popout .35s ease forwards}
-  .quick .qic{width:30px;height:30px;border-radius:8px;background:var(--purple-soft);color:var(--purple-deep);display:flex;align-items:center;justify-content:center;font:700 .8rem 'Fraunces';margin-bottom:11px}
-  .quick h4{font-size:var(--fs-h3);margin-bottom:4px}
-  .quick .cap{font-size:var(--fs-sm);color:var(--mut);line-height:1.55;margin-bottom:13px;flex:1}
+  .quick .qic{width:32px;height:32px;border-radius:8px;background:var(--purple-soft);color:var(--purple-deep);display:flex;align-items:center;justify-content:center;font:700 .84rem 'Fraunces';margin-bottom:14px}
+  .quick h4{font-size:1.05rem;margin-bottom:7px}
+  .quick .cap{font-size:var(--fs-sm);color:var(--mut);line-height:1.6;margin-bottom:16px;flex:1}
   .quick .open-btn{align-self:flex-start}
-  .quick .inner{display:none;margin-top:4px}
+  .quick .inner{display:none;margin-top:6px}
   .quick.open{border-color:var(--purple)}
   .quick.open .inner{display:block}
   .quick.open .open-btn{display:none}
@@ -586,38 +587,8 @@
 
       <div class="grid2">
         <div>
-          <!-- pending drafts — the one feedback surface -->
-          <div class="card reveal" id="pendingDraftsCard" style="--d:40ms;margin-bottom:22px">
-            <div class="sect-head">
-              <h3 class="serif">Drafts waiting for your feedback</h3>
-              <button class="link" data-page="drafts">View all →</button>
-            </div>
-            <div class="draft-grid3" id="pendingDraftsWidget"></div>
-          </div>
-
-          <!-- nudges — standalone, always available -->
-          <div class="card reveal" id="nudgesCard" style="--d:90ms">
-            <div class="sect-head"><h3 class="serif">Quick nudges</h3></div>
-            <p style="font-size:var(--fs-sm);color:var(--mut);line-height:1.55;margin-bottom:14px">Two quick picks to sharpen your next batch:</p>
-            <div class="qgrid">
-              <div class="qbox" id="q1">
-                <b>Which opening do you prefer?</b>
-                <button class="opt" data-q="q1" data-a="Never in my life…">A &nbsp;"Never in my life…"</button>
-                <button class="opt" data-q="q1" data-a="I would never…">B &nbsp;"I would never…"</button>
-                <span class="done-line">Noted — saved to your profile.</span>
-              </div>
-              <div class="qbox" id="q2">
-                <b>Which closing feels more you?</b>
-                <button class="opt" data-q="q2" data-a="What would you add?">A &nbsp;"What would you add?"</button>
-                <button class="opt" data-q="q2" data-a="Agree or disagree?">B &nbsp;"Agree or disagree?"</button>
-                <span class="done-line">Noted — saved to your profile.</span>
-              </div>
-            </div>
-            <div class="toast" id="nudgeToast"></div>
-          </div>
-
-          <!-- quick actions -->
-          <div class="quick-row reveal" id="quickRow" style="--d:140ms">
+          <!-- quick actions — first thing the client does -->
+          <div class="quick-row reveal" id="quickRow" style="--d:40ms">
             <div class="quick" id="qOnboard">
               <div class="qic">1</div>
               <h4>Book onboarding meeting</h4>
@@ -640,6 +611,36 @@
                 <button class="btn btn-primary btn-sm" id="saveWritten" style="margin-top:10px">Submit</button>
               </div>
             </div>
+          </div>
+
+          <!-- pending drafts — the one feedback surface -->
+          <div class="card reveal" id="pendingDraftsCard" style="--d:90ms;margin-bottom:22px">
+            <div class="sect-head">
+              <h3 class="serif">Drafts waiting for your feedback</h3>
+              <button class="link" data-page="drafts">View all →</button>
+            </div>
+            <div class="draft-grid3" id="pendingDraftsWidget"></div>
+          </div>
+
+          <!-- nudges — standalone, always available -->
+          <div class="card reveal" id="nudgesCard" style="--d:140ms">
+            <div class="sect-head"><h3 class="serif">Quick nudges</h3></div>
+            <p style="font-size:var(--fs-sm);color:var(--mut);line-height:1.55;margin-bottom:14px">Two quick picks to sharpen your next batch:</p>
+            <div class="qgrid">
+              <div class="qbox" id="q1">
+                <b>Which opening do you prefer?</b>
+                <button class="opt" data-q="q1" data-a="Never in my life…">A &nbsp;"Never in my life…"</button>
+                <button class="opt" data-q="q1" data-a="I would never…">B &nbsp;"I would never…"</button>
+                <span class="done-line">Noted — saved to your profile.</span>
+              </div>
+              <div class="qbox" id="q2">
+                <b>Which closing feels more you?</b>
+                <button class="opt" data-q="q2" data-a="What would you add?">A &nbsp;"What would you add?"</button>
+                <button class="opt" data-q="q2" data-a="Agree or disagree?">B &nbsp;"Agree or disagree?"</button>
+                <span class="done-line">Noted — saved to your profile.</span>
+              </div>
+            </div>
+            <div class="toast" id="nudgeToast"></div>
           </div>
 
           <div class="card reveal" style="--d:180ms">
