@@ -640,23 +640,6 @@
                 <button class="btn btn-primary btn-sm" id="saveWritten" style="margin-top:10px">Submit</button>
               </div>
             </div>
-            <div class="quick" id="qCall">
-              <div class="qic">3</div>
-              <h4>Book a content call</h4>
-              <p class="cap">Every two weeks · 20 minutes with Matvei, your writer, to plan your next posts.</p>
-              <button class="btn btn-ghost btn-sm open-btn" data-open="qCall">Choose a time</button>
-              <div class="inner">
-                <div class="writer">
-                  <span class="pavatar">M</span>
-                  <div><b>Matvei</b><span>Senior brand writer · your client manager</span></div>
-                </div>
-                <div class="slot-row" id="callSlots">
-                  <button>Fri 21 · 10:00</button><button>Fri 21 · 14:30</button><button>Mon 24 · 09:00</button><button>Tue 25 · 11:30</button>
-                </div>
-                <button class="btn btn-primary btn-sm" id="bookCall" style="margin-top:12px">Book</button>
-              </div>
-              <div class="booked-line" id="callBookedLine"></div>
-            </div>
           </div>
 
           <div class="card reveal" style="--d:180ms">
@@ -670,10 +653,10 @@
 
         <div class="card checklist reveal" id="progressCard" style="--d:80ms">
           <div class="kicker" style="margin-bottom:6px">Getting set up</div>
-          <p style="font-size:var(--fs-sm);color:var(--mut);margin-bottom:14px">Six steps and BAM runs on autopilot.</p>
+          <p style="font-size:var(--fs-sm);color:var(--mut);margin-bottom:14px">Five steps and BAM runs on autopilot.</p>
           <div class="ring-row">
-            <div class="ring" id="ring"><i id="pctRing">1/6</i></div>
-            <div style="font-size:var(--fs-sm);color:var(--mut);line-height:1.5">You're <b id="doneCount" style="color:var(--dark)">1 of 6</b> steps in. Pick up where you left off anytime.</div>
+            <div class="ring" id="ring"><i id="pctRing">1/5</i></div>
+            <div style="font-size:var(--fs-sm);color:var(--mut);line-height:1.5">You're <b id="doneCount" style="color:var(--dark)">1 of 5</b> steps in. Pick up where you left off anytime.</div>
           </div>
           <ul class="tasks" id="tasks">
             <li class="done" data-task="account"><span class="box">✓</span>Create your account</li>
@@ -681,7 +664,6 @@
             <li data-task="drafts"><span class="box">✓</span>Approve or decline a draft<button data-page="drafts">Do it →</button></li>
             <li data-task="writtentext"><span class="box">✓</span>Upload written text<button data-page="dashboard">Do it →</button></li>
             <li data-task="personalize"><span class="box">✓</span>Personalize your profile<button data-page="profile">Do it →</button></li>
-            <li data-task="call"><span class="box">✓</span>Book a call with your writer<button data-page="dashboard">Do it →</button></li>
           </ul>
         </div>
       </div>
@@ -924,11 +906,11 @@ function goPage(name){
 document.querySelectorAll('[data-page]').forEach(el=>el.addEventListener('click',()=>goPage(el.dataset.page)));
 
 /* ===== checklist ===== */
-const taskState={account:true,onboarding:false,drafts:false,writtentext:false,personalize:false,call:false};
+const taskState={account:true,onboarding:false,drafts:false,writtentext:false,personalize:false};
 function completeTask(k){
   if(taskState[k])return; taskState[k]=true;
   const li=document.querySelector(`#tasks li[data-task="${k}"]`); if(li)li.classList.add('done');
-  const done=Object.values(taskState).filter(Boolean).length,total=6,pct=Math.round(done/total*100);
+  const done=Object.values(taskState).filter(Boolean).length,total=5,pct=Math.round(done/total*100);
   setText('pctRing',`${done}/${total}`);
   document.getElementById('ring').style.setProperty('--deg',(pct*3.6)+'deg');
   setText('doneCount',`${done} of ${total}`);
@@ -953,7 +935,7 @@ function pickSlot(rowId){
   }));
   return ()=>chosen;
 }
-const getOnboardSlot=pickSlot('onboardSlots'), getCallSlot=pickSlot('callSlots');
+const getOnboardSlot=pickSlot('onboardSlots');
 document.getElementById('bookOnboard').onclick=function(){
   const s=getOnboardSlot();
   if(!s){ this.textContent='Pick a time first'; setTimeout(()=>this.textContent='Book',1400); return; }
@@ -968,14 +950,6 @@ document.getElementById('saveWritten').onclick=function(){
   const box=document.getElementById('qText');
   box.classList.add('gone'); setTimeout(()=>box.remove(),380);
   completeTask('writtentext');
-};
-document.getElementById('bookCall').onclick=function(){
-  const s=getCallSlot();
-  if(!s){ this.textContent='Pick a time first'; setTimeout(()=>this.textContent='Book',1400); return; }
-  const box=document.getElementById('qCall');
-  box.classList.remove('open'); box.classList.add('booked');
-  setText('callBookedLine','Booked — '+s+' with Matvei. Invite on its way to your email. This repeats every two weeks — book another anytime.');
-  completeTask('call');
 };
 
 /* ===== profile samples ===== */
@@ -1384,7 +1358,7 @@ document.getElementById('tpRetry').onclick=()=>{ tpShowStep('tpStepWrite'); };
 /* ===== tour ===== */
 const tourSteps=[
  {page:'dashboard',sel:'#navList',title:'Everything lives here',body:'Content Management, Calendar, Content Ideas, Media Library, My Profile and Account Settings — all one click away.'},
- {page:'dashboard',sel:'#quickRow',title:'Three quick wins',body:'Book your onboarding meeting, submit written text, and book a content call with Matvei — that one repeats every two weeks. The first two disappear once done; the content call stays for whenever you need him.'},
+ {page:'dashboard',sel:'#quickRow',title:'Two quick wins',body:'Book your onboarding meeting and submit written text — both disappear once done and feed straight into your voice model.'},
  {page:'dashboard',sel:'#pendingDraftsCard',title:'Drafts land right here',body:'Pending drafts surface on your Dashboard automatically. Approve one and it disappears and gets scheduled; decline with a comment and Matvei sees your note.'},
  {page:'drafts',sel:'#draftExamples',title:'Organized by status',body:'Pending, Approved, Published, Declined and Comments — every post, one tab each, with live counts. Try Approve or Decline; it is a safe demo.'},
  {page:'ideas',sel:'#ideaForm',title:'Your ideas, your words',body:'Type any idea — a panel you attended, a client moment — and submit. BAM drafts it in your voice. Add written text here too if you have it.'},
