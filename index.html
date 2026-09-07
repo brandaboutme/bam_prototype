@@ -96,11 +96,24 @@
   .modal li b{color:var(--green-deep)}
   .modal .row{display:flex;gap:10px}
   .modal .row .btn{flex:1}
-  .modal-wide{max-width:500px;text-align:left}
-  .modal-wide .pp-head{display:flex;gap:10px;align-items:center;margin-bottom:14px}
-  .modal-wide .pp-body{font-size:.95rem;line-height:1.65;margin-bottom:16px;white-space:pre-line}
-  .modal-wide .pp-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .modal-wide{max-width:480px;text-align:left}
+  .pp-eyebrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .modal-wide .pp-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
   .modal-wide .pp-actions textarea{width:100%;min-height:90px;border:1.5px solid var(--purple);border-radius:var(--r-sm);padding:11px;font:400 var(--fs-sm)/1.6 'Public Sans';margin-bottom:10px;resize:vertical}
+
+  /* realistic LinkedIn post mock — intentionally LinkedIn's own visual language, not ours */
+  .li-post{border:1px solid #d9dfe6;border-radius:8px;background:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;overflow:hidden}
+  .li-post-head{display:flex;gap:10px;padding:14px 14px 10px;align-items:flex-start}
+  .li-avatar{width:48px;height:48px;border-radius:50%;background:var(--purple);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;flex-shrink:0}
+  .li-who{flex:1;min-width:0}
+  .li-who b{display:block;font-size:.95rem;color:#000;line-height:1.3}
+  .li-headline{display:block;font-size:.78rem;color:#666;line-height:1.35;margin-top:1px}
+  .li-meta{display:flex;align-items:center;gap:4px;font-size:.75rem;color:#666;margin-top:2px}
+  .li-post-body{padding:0 14px 12px;font-size:.92rem;line-height:1.5;color:#000;white-space:pre-line}
+  .li-post-body strong{font-weight:700;color:#000;background:none}
+  .li-post-actions{display:flex;border-top:1px solid #eef1f4;padding:4px}
+  .li-post-actions span{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 4px;border-radius:6px;font-size:.78rem;font-weight:600;color:#666}
+  .li-post-actions span:hover{background:#f2f2f2}
 
   /* ============ app shell ============ */
   .app{display:none;min-height:100vh}
@@ -160,6 +173,14 @@
     radial-gradient(50% 80% at 96% 10%, rgba(201,245,155,.22), transparent 70%)}
   .hello{font-size:1.5rem;letter-spacing:-.01em;margin-bottom:3px}
   .hello-sub{color:var(--mut);font-size:var(--fs-body);margin-bottom:0}
+  .li-connect{display:none;align-items:center;gap:10px;margin-top:14px;background:#e8f1fb;border:1px solid #c7ddf3;border-radius:var(--r-sm);padding:10px 14px;font-size:var(--fs-sm);color:#0a4d8c}
+  .li-connect.show{display:flex;flex-wrap:wrap}
+  .li-mark-sm{width:24px;height:24px;border-radius:5px;background:var(--linkedin);color:#fff;display:flex;align-items:center;justify-content:center;font:700 .78rem 'Fraunces';flex-shrink:0}
+  .li-connect .btn{margin-left:auto}
+  .draft-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
+  @media (max-width:1000px){.draft-grid3{grid-template-columns:1fr}}
+  .draft-empty-slot{border:1.5px dashed var(--line-strong);border-radius:var(--r-lg);padding:20px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;color:var(--mut);font-size:var(--fs-xs);min-height:170px;background:var(--light)}
+  .draft-empty-slot .kicker{margin-bottom:8px}
 
   .quick-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px;margin-bottom:22px}
   .quick{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;box-shadow:var(--lift);transition:border-color .2s var(--ease),box-shadow .2s var(--ease),transform .2s var(--ease);overflow:hidden;display:flex;flex-direction:column}
@@ -444,15 +465,24 @@
 <!-- Post preview modal (shared: dashboard drafts + calendar) -->
 <div class="modal-bg" id="postPreviewBg">
   <div class="modal modal-wide" role="dialog" aria-label="Post preview">
-    <div class="pp-head">
-      <div class="avatar">AO</div>
-      <div>
-        <div style="font-weight:600;font-size:.92rem">Ada O.</div>
-        <div style="font-size:.78rem;color:var(--faint)" id="ppSub">—</div>
-      </div>
-      <span class="badge" id="ppBadge" style="margin-left:auto"></span>
+    <div class="pp-eyebrow">
+      <span class="kicker">How it looks on LinkedIn</span>
+      <span class="badge" id="ppBadge"></span>
     </div>
-    <div class="pp-body" id="ppBody"></div>
+    <div class="li-post">
+      <div class="li-post-head">
+        <div class="li-avatar">AO</div>
+        <div class="li-who">
+          <b>Ada Obi</b>
+          <span class="li-headline">Finance Consultant</span>
+          <span class="li-meta"><span id="ppSub">Now</span> · 🌐</span>
+        </div>
+      </div>
+      <div class="li-post-body" id="ppBody"></div>
+      <div class="li-post-actions">
+        <span>👍 Like</span><span>💬 Comment</span><span>🔁 Repost</span><span>➤ Send</span>
+      </div>
+    </div>
     <div class="pp-actions" id="ppActions"></div>
     <button class="link-mut link" id="ppClose" style="margin-top:14px">Close</button>
   </div>
@@ -546,22 +576,48 @@
     <section class="page on" id="p-dashboard">
       <div class="dash-head reveal" style="--d:0ms">
         <div class="hello serif">Welcome back, Ada</div>
-        <div class="hello-sub">Finance Consultant · <span id="connectVia">connected via LinkedIn</span></div>
+        <p class="hello-sub" id="waitingLine">Loading…</p>
+        <div class="li-connect" id="liConnectBanner">
+          <span class="li-mark-sm">in</span>
+          <span>Connect your LinkedIn to publish approved posts automatically.</span>
+          <button class="btn btn-li btn-sm" id="liConnectBtn">Connect LinkedIn</button>
+        </div>
       </div>
 
       <div class="grid2">
         <div>
-          <!-- pending drafts -->
+          <!-- pending drafts — the one feedback surface -->
           <div class="card reveal" id="pendingDraftsCard" style="--d:40ms;margin-bottom:22px">
             <div class="sect-head">
-              <h3 class="serif" id="pendingHeading">4 drafts waiting for your approval</h3>
+              <h3 class="serif">Drafts waiting for your feedback</h3>
               <button class="link" data-page="drafts">View all →</button>
             </div>
-            <div class="draft-list" id="pendingDraftsWidget"></div>
+            <div class="draft-grid3" id="pendingDraftsWidget"></div>
+          </div>
+
+          <!-- nudges — standalone, always available -->
+          <div class="card reveal" id="nudgesCard" style="--d:90ms">
+            <div class="sect-head"><h3 class="serif">Quick nudges</h3></div>
+            <p style="font-size:var(--fs-sm);color:var(--mut);line-height:1.55;margin-bottom:14px">Two quick picks to sharpen your next batch:</p>
+            <div class="qgrid">
+              <div class="qbox" id="q1">
+                <b>Which opening do you prefer?</b>
+                <button class="opt" data-q="q1" data-a="Never in my life…">A &nbsp;"Never in my life…"</button>
+                <button class="opt" data-q="q1" data-a="I would never…">B &nbsp;"I would never…"</button>
+                <span class="done-line">Noted — saved to your profile.</span>
+              </div>
+              <div class="qbox" id="q2">
+                <b>Which closing feels more you?</b>
+                <button class="opt" data-q="q2" data-a="What would you add?">A &nbsp;"What would you add?"</button>
+                <button class="opt" data-q="q2" data-a="Agree or disagree?">B &nbsp;"Agree or disagree?"</button>
+                <span class="done-line">Noted — saved to your profile.</span>
+              </div>
+            </div>
+            <div class="toast" id="nudgeToast"></div>
           </div>
 
           <!-- quick actions -->
-          <div class="quick-row reveal" id="quickRow" style="--d:90ms">
+          <div class="quick-row reveal" id="quickRow" style="--d:140ms">
             <div class="quick" id="qOnboard">
               <div class="qic">1</div>
               <h4>Book onboarding meeting</h4>
@@ -603,27 +659,6 @@
             </div>
           </div>
 
-          <!-- congrats + quick questions -->
-          <div class="card congrats reveal" id="congratsCard" style="--d:140ms">
-            <div class="card-head serif">No drafts waiting for your approval</div>
-            <div class="card-sub">Nicely done. While you're here — two quick ones to sharpen your next batch:</div>
-            <div class="qgrid">
-              <div class="qbox" id="q1">
-                <b>Which opening do you prefer?</b>
-                <button class="opt" data-q="q1" data-a="Never in my life…">A &nbsp;"Never in my life…"</button>
-                <button class="opt" data-q="q1" data-a="I would never…">B &nbsp;"I would never…"</button>
-                <span class="done-line">Noted — saved to your profile.</span>
-              </div>
-              <div class="qbox" id="q2">
-                <b>Which closing feels more you?</b>
-                <button class="opt" data-q="q2" data-a="What would you add?">A &nbsp;"What would you add?"</button>
-                <button class="opt" data-q="q2" data-a="Agree or disagree?">B &nbsp;"Agree or disagree?"</button>
-                <span class="done-line">Noted — saved to your profile.</span>
-              </div>
-            </div>
-            <div class="toast" id="nudgeToast"></div>
-          </div>
-
           <div class="card reveal" style="--d:180ms">
             <div class="sect-head"><h3 class="serif">Next scheduled post</h3><button class="link" data-page="calendar">Calendar →</button></div>
             <div class="draft" style="border:0;padding:0;margin:0;box-shadow:none">
@@ -658,7 +693,7 @@
         <div class="avatar">AO</div>
         <div>
           <h2 class="serif">Ada Obi</h2>
-          <div class="sub">Finance Consultant · Lagos · <span class="badge badge-green">LinkedIn connected</span></div>
+          <div class="sub">Finance Consultant · Lagos · LinkedIn <span class="badge badge-green li-status">Connected</span></div>
         </div>
       </div>
       <div class="prof-grid" id="profileCard">
@@ -737,7 +772,7 @@
       <div class="page-head"><h2>Calendar</h2><p>Everything scheduled, a month at a glance.</p></div>
       <div class="cal-hint">Click any scheduled post to preview it. Drag it to a new day to reschedule — watch, we'll show you how automatically.</div>
       <div class="cal" id="calWrap">
-        <div class="cal-top"><h3 class="serif">August 2026</h3><span class="badge badge-green" id="calCount">1 post scheduled</span></div>
+        <div class="cal-top"><h3 class="serif">August 2026</h3></div>
         <div class="cal-dow"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
         <div class="cal-grid" id="calGrid"></div>
       </div>
@@ -793,7 +828,7 @@
         <div class="field"><label for="s-name">Full name</label><input id="s-name" value="Ada Obi"></div>
         <div class="field"><label for="s-mail">Email</label><input id="s-mail" type="email" value="ada@example.com"></div>
         <div class="field"><label for="s-ind">Industry</label><input id="s-ind" value="Finance Consulting"></div>
-        <div style="font-size:var(--fs-sm);color:var(--mut);margin:6px 0 16px">LinkedIn <span class="badge badge-green">Connected</span></div>
+        <div style="font-size:var(--fs-sm);color:var(--mut);margin:6px 0 16px">LinkedIn <span class="badge badge-green li-status">Connected</span></div>
         <button class="btn btn-primary btn-sm" id="saveSettingsBtn">Save changes</button>
         <div class="toast" id="settingsToast">Saved.</div>
       </div>
@@ -825,17 +860,28 @@ document.getElementById('openConsent').onclick=()=>consent.classList.add('open')
 document.getElementById('cancelConsent').onclick=()=>consent.classList.remove('open');
 document.getElementById('toEmail').onclick=()=>showGate(gEmail);
 document.getElementById('backToLanding').onclick=()=>showGate(gLanding);
+let linkedinConnected=true;
+function setLinkedInConnected(v){
+  linkedinConnected=v;
+  const banner=document.getElementById('liConnectBanner'); if(banner) banner.classList.toggle('show',!v);
+  document.querySelectorAll('.li-status').forEach(el=>{
+    el.textContent=v?'Connected':'Not connected';
+    el.className='badge li-status '+(v?'badge-green':'badge-red');
+  });
+}
 function enterApp(){
   consent.classList.remove('open');
   [gLanding,gEmail].forEach(x=>x.classList.remove('on'));
   app.classList.add('on');
+  setLinkedInConnected(linkedinConnected);
   setTimeout(startTour,400);
 }
 document.getElementById('allowConsent').onclick=enterApp;
 document.getElementById('emailContinue').onclick=()=>{
-  document.getElementById('connectVia').textContent='signed up with email · connect LinkedIn anytime';
+  linkedinConnected=false;
   enterApp();
 };
+document.getElementById('liConnectBtn').onclick=()=>{ setLinkedInConnected(true); };
 
 /* ===== helpers ===== */
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
@@ -962,11 +1008,13 @@ let schedulingId=null;
 let decliningId=null;
 function draftCardHTML(d){
   const approved=d.status==='approved', declined=d.status==='declined', isDeclining=decliningId===d.id, isScheduling=schedulingId===d.id;
+  const kicker = approved?`Scheduled · ${dayLabel(d.day)}, ${d.time}`:declined?'Declined':`Draft · ${dayLabel(d.day)}, ${d.time}`;
   return `<div class="draft ${approved?'approved':''} ${isDeclining?'editing':''} ${!isDeclining&&!isScheduling?'clickable':''}" data-id="${d.id}" data-preview="draft">
     <span class="badge badge-ex" style="position:absolute;top:13px;right:13px">Example</span>
-    <div class="row"><div class="avatar">AO</div><div><div class="who">Ada O.</div><div class="sub">${approved?`Scheduled · ${dayLabel(d.day)}, ${d.time}`:d.sub}</div></div></div>
+    <div class="kicker" style="margin-bottom:8px">${kicker}</div>
     <div class="body">${d.body}</div>
-    ${!approved&&!declined?`<button class="sched-chip" data-act="schedtoggle" data-noclick="1">📅 ${dayLabel(d.day)} · ${d.time}</button>
+    ${!approved&&!declined?`<button class="link" data-act="previewlink" data-noclick="1" style="display:block;margin-top:8px">See LinkedIn preview →</button>
+    <button class="sched-chip" data-act="schedtoggle" data-noclick="1">📅 ${dayLabel(d.day)} · ${d.time}</button>
     <div class="sched-pop ${isScheduling?'open':''}" data-noclick="1">
       <div class="row2">
         <select data-role="schedday">${[20,21,22,23,24,25,26,27,28,29,30,31].map(n=>`<option value="${n}" ${n===d.day?'selected':''}>${dayLabel(n)}</option>`).join('')}</select>
@@ -992,6 +1040,7 @@ function draftCardHTML(d){
 function handleDraftAction(id,act,cardEl){
   const d=drafts.find(x=>x.id===id); if(!d)return;
   const scope=cardEl||document.querySelector(`.draft[data-id="${id}"]`);
+  if(act==='previewlink'){ openPostPreview('draft',id); return; }
   if(act==='approve'){
     d.status='approved';
     d.msg='Approved — this becomes a scheduled post and moves to your Calendar automatically. You can still reschedule it before it goes live.'; d.msgClass='';
@@ -1024,6 +1073,9 @@ const publishedDemo=[
 function emptyStateHTML(icon,title,body){
   return `<div class="empty-state"><div class="glyph">${icon}</div><h4>${title}</h4><p>${body}</p></div>`;
 }
+function emptySlotHTML(){
+  return `<div class="draft-empty-slot"><div class="kicker">All caught up</div><p>Nothing waiting right now — nice work. New drafts land here.</p></div>`;
+}
 document.querySelectorAll('#ctabs .ctab').forEach(b=>{
   b.onclick=()=>{
     contentTab=b.dataset.tab;
@@ -1053,8 +1105,14 @@ function renderDrafts(){
   }
 
   const widget=document.getElementById('pendingDraftsWidget');
-  if(widget) widget.innerHTML=pending.map(draftCardHTML).join('');
-  setText('pendingHeading',`${pending.length} draft${pending.length===1?'':'s'} waiting for your approval`);
+  if(widget){
+    const shown=pending.slice(0,3);
+    let html=shown.map(draftCardHTML).join('');
+    for(let i=shown.length;i<3;i++) html+=emptySlotHTML();
+    widget.innerHTML=html;
+  }
+  const waitLine=document.getElementById('waitingLine');
+  if(waitLine) waitLine.textContent = pending.length ? `${pending.length} draft${pending.length===1?'':'s'} ${pending.length===1?'is':'are'} waiting for your feedback.` : "You're all caught up — nothing waiting right now.";
 
   document.querySelectorAll('#draftExamples [data-act],#pendingDraftsWidget [data-act]').forEach(btn=>{
     btn.onclick=(e)=>{ e.stopPropagation(); const card=btn.closest('.draft'); handleDraftAction(+card.dataset.id,btn.dataset.act,card); };
@@ -1070,11 +1128,6 @@ function renderDrafts(){
   setText('cntDeclined',declined.length); setText('cntComments',commented.length);
   setText('cntPublished',publishedDemo.length);
   setText('draftsWaitingProf',pending.length); setText('schedProf',sched);
-  setText('calCount',`${sched} post${sched===1?'':'s'} scheduled`);
-
-  const pcard=document.getElementById('pendingDraftsCard'), congrats=document.getElementById('congratsCard');
-  if(pcard) pcard.style.display=pending.length?'':'none';
-  if(congrats) congrats.classList.toggle('show',pending.length===0);
 }
 renderDrafts();
 
